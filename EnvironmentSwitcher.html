@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+  <meta name="google-site-verification" content="BVUkBoL2T9wdh_d3Mk8V_x5QuHXXVnp2-bgFNTUzUMs">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="Environment Switcher 是一个在 Android 的开发和测试阶段，运用 Java 注解、APT、反射、混淆等原理来一键切换环境的工具。 目前该项目已经达成如下成就：">
+<meta name="keywords" content="开源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EnvironmentSwitcher">
+<meta property="og:url" content="https://codexiaomai.github.io/EnvironmentSwitcher.html">
+<meta property="og:site_name" content="CodeXiaoMai">
+<meta property="og:description" content="Environment Switcher 是一个在 Android 的开发和测试阶段，运用 Java 注解、APT、反射、混淆等原理来一键切换环境的工具。 目前该项目已经达成如下成就：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://img.shields.io/github/stars/CodeXiaoMai/EnvironmentSwitcher.svg">
+<meta property="og:image" content="https://img.shields.io/github/forks/CodeXiaoMai/EnvironmentSwitcher.svg">
+<meta property="og:image" content="https://img.shields.io/github/watchers/CodeXiaoMai/EnvironmentSwitcher.svg">
+<meta property="og:image" content="https://api.bintray.com/packages/xiaomai/maven/environmentswitcher/images/download.svg">
+<meta property="og:image" content="https://api.bintray.com/packages/xiaomai/maven/environmentswitcher-compiler/images/download.svg">
+<meta property="og:image" content="https://api.bintray.com/packages/xiaomai/maven/environmentswitcher-compiler-release/images/download.svg">
+<meta property="og:image" content="https://codexiaomai.github.io/images/environment_switcher/5275145-b3529a5f32884ab9.gif">
+<meta property="og:updated_time" content="2019-08-04T13:02:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EnvironmentSwitcher">
+<meta name="twitter:description" content="Environment Switcher 是一个在 Android 的开发和测试阶段，运用 Java 注解、APT、反射、混淆等原理来一键切换环境的工具。 目前该项目已经达成如下成就：">
+<meta name="twitter:image" content="https://img.shields.io/github/stars/CodeXiaoMai/EnvironmentSwitcher.svg">
+  <link rel="canonical" href="https://codexiaomai.github.io/EnvironmentSwitcher">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>EnvironmentSwitcher | CodeXiaoMai</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CodeXiaoMai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">CodeXiaoMai的博客</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://codexiaomai.github.io/EnvironmentSwitcher.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CodeXiaoMai">
+      <meta itemprop="description" content="CodeXiaoMai的博客">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CodeXiaoMai">
+    </span>
+      <header class="post-header">
+
+        
+          <h2 class="post-title" itemprop="name headline">EnvironmentSwitcher
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          
+            <i class="fa fa-thumb-tack"></i>
+            <font color="7D26CD">置顶</font>
+            <span class="post-meta-divider">|</span>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-29 21:26:32" itemprop="dateCreated datePublished" datetime="2019-07-29T21:26:32+08:00">2019-07-29</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-04 21:02:11" itemprop="dateModified" datetime="2019-08-04T21:02:11+08:00">2019-08-04</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/开源/" itemprop="url" rel="index"><span itemprop="name">开源</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span id="/EnvironmentSwitcher.html" class="post-meta-item leancloud_visitors" data-flag-title="EnvironmentSwitcher">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          <br>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">8.4k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://github.com/CodeXiaoMai/EnvironmentSwitcher" rel="external nofollow noopener noreferrer" target="_blank">Environment Switcher</a> 是一个在 Android 的开发和测试阶段，运用 Java 注解、APT、反射、混淆等原理来一键切换环境的工具。</p>
+<p>目前该项目已经达成如下成就：<br><a href="https://github.com/CodeXiaoMai/EnvironmentSwitcher/stargazers" rel="external nofollow noopener noreferrer" target="_blank"><img src="https://img.shields.io/github/stars/CodeXiaoMai/EnvironmentSwitcher.svg" alt="GitHub stars"></a><a href="https://github.com/CodeXiaoMai/EnvironmentSwitcher/network" rel="external nofollow noopener noreferrer" target="_blank"><img src="https://img.shields.io/github/forks/CodeXiaoMai/EnvironmentSwitcher.svg" alt="GitHub forks"></a><a href="https://github.com/CodeXiaoMai/EnvironmentSwitcher/watchers" rel="external nofollow noopener noreferrer" target="_blank"><img src="https://img.shields.io/github/watchers/CodeXiaoMai/EnvironmentSwitcher.svg" alt="GitHub watchers"></a></p>
+<a id="more"></a>
+
+<p>它具有以下特点：</p>
+<ul>
+<li>配置简单</li>
+<li>安全，不泄漏测试环境地址</li>
+<li>不用重新打包即可一键切换环境</li>
+<li>支持按模块配置与切换环境</li>
+<li>支持环境切换通知回调</li>
+<li>自动生成 <code>切换</code> <code>保存</code> <code>获取</code> 环境的逻辑代码</li>
+<li>与项目解耦</li>
+<li>……</li>
+</ul>
+<h2 id="为什么不用-Gradle"><a href="#为什么不用-Gradle" class="headerlink" title="为什么不用 Gradle"></a>为什么不用 Gradle</h2><p>看到这里你可能会想，这些功能我用 Gradle 就能搞定了，为什么要用 Environment Switcher 呢？别着急，下面我们来比较一下 Environment Switcher 和 Gradle。</p>
+<table>
+<thead>
+<tr>
+<th align="center">比较内容</th>
+<th align="center">Environment Switcher</th>
+<th align="center">Gradle  Application Id 不同</th>
+<th align="center">Gradle Application Id 相同</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">运行时切换环境</td>
+<td align="center">✔️</td>
+<td align="center">✖️</td>
+<td align="center">✖️</td>
+</tr>
+<tr>
+<td align="center">切换环境回调</td>
+<td align="center">✔️</td>
+<td align="center">✖️</td>
+<td align="center">✖️</td>
+</tr>
+<tr>
+<td align="center">切换环境逻辑</td>
+<td align="center">自动生成</td>
+<td align="center">需要自己实现</td>
+<td align="center">需要自己实现</td>
+</tr>
+<tr>
+<td align="center">n 套环境打包数量</td>
+<td align="center">1个</td>
+<td align="center">n个</td>
+<td align="center">n个</td>
+</tr>
+<tr>
+<td align="center">多套环境同时安装</td>
+<td align="center">✔️</td>
+<td align="center">✔️</td>
+<td align="center">✖️</td>
+</tr>
+<tr>
+<td align="center">支付等SDK包名校验</td>
+<td align="center">✔️</td>
+<td align="center">✖️</td>
+<td align="center">✔️</td>
+</tr>
+<tr>
+<td align="center">多模块环境配置</td>
+<td align="center">✔️</td>
+<td align="center">✔️</td>
+<td align="center">✔️</td>
+</tr>
+<tr>
+<td align="center">测试环境不泄露</td>
+<td align="center">✔️</td>
+<td align="center">✔️</td>
+<td align="center">✔️</td>
+</tr>
+<tr>
+<td align="center">……</td>
+<td align="center">——</td>
+<td align="center">——</td>
+<td align="center">——</td>
+</tr>
+</tbody></table>
+<p>这里就先列举这么多，仅 <code>运行时切换环境</code> 、<code>打包数量</code>、<code>切换环境回调</code> 这几个特点就比 Gradle 方便很多，而且 Environment Switcher 的接入成本也很低。是不是想试一试了？</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><table>
+<thead>
+<tr>
+<th align="center">module</th>
+<th align="center">environmentswitcher</th>
+<th align="center">environmentswitcher-compiler</th>
+<th align="center">environmentswitcher-compiler-release</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">version</td>
+<td align="center"><a href="https://bintray.com/xiaomai/maven/environmentswitcher/_latestVersion" rel="external nofollow noopener noreferrer" target="_blank"> <img src="https://api.bintray.com/packages/xiaomai/maven/environmentswitcher/images/download.svg" alt="Download"> </a></td>
+<td align="center"><a href="https://bintray.com/xiaomai/maven/environmentswitcher-compiler/_latestVersion" rel="external nofollow noopener noreferrer" target="_blank"> <img src="https://api.bintray.com/packages/xiaomai/maven/environmentswitcher-compiler/images/download.svg" alt="Download"> </a></td>
+<td align="center"><a href="https://bintray.com/xiaomai/maven/environmentswitcher-compiler-release/_latestVersion" rel="external nofollow noopener noreferrer" target="_blank"> <img src="https://api.bintray.com/packages/xiaomai/maven/environmentswitcher-compiler-release/images/download.svg" alt="Download"> </a></td>
+</tr>
+</tbody></table>
+<h3 id="配置项目的-build-gradle"><a href="#配置项目的-build-gradle" class="headerlink" title="配置项目的 build.gradle"></a>配置项目的 build.gradle</h3><h4 id="java-版"><a href="#java-版" class="headerlink" title="java 版"></a>java 版</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    ...</span><br><span class="line">    implementation &quot;com.xiaomai.environmentswitcher:environmentswitcher:$version&quot;</span><br><span class="line">    debugAnnotationProcessor &quot;com.xiaomai.environmentswitcher:environmentswitcher-compiler:$version&quot;</span><br><span class="line">    releaseAnnotationProcessor &quot;com.xiaomai.environmentswitcher:environmentswitcher-compiler-release:$version&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="kotlin-版"><a href="#kotlin-版" class="headerlink" title="kotlin 版"></a>kotlin 版</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &apos;kotlin-kapt&apos;</span><br><span class="line">...</span><br><span class="line">dependencies &#123;</span><br><span class="line">    ...</span><br><span class="line">    implementation &quot;com.xiaomai.environmentswitcher:environmentswitcher:$version&quot;</span><br><span class="line">    kaptDebug &quot;com.xiaomai.environmentswitcher:environmentswitcher-compiler:$version&quot;</span><br><span class="line">    kaptRelease &quot;com.xiaomai.environmentswitcher:environmentswitcher-compiler-release:$version&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="编写-EnvironmentConfig-文件"><a href="#编写-EnvironmentConfig-文件" class="headerlink" title="编写 EnvironmentConfig 文件"></a>编写 EnvironmentConfig 文件</h3><p><strong>这个类是 Environment Switcher 依赖的核心代码，所有获取、修改环境的逻辑代码都会依赖这个类中被 <code>@Module</code> 和 <code>@Environment</code> 两个注解标记的类和属性自动生成。</strong></p>
+<blockquote>
+<p>注意：如果你的项目中使用了 Kotlin，请使用 Java 语言编写 EnvironmentConfig，暂时还不支持使用 Kotlin 编写这个类。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">  * 环境配置类&lt;/br&gt;</span><br><span class="line">  *</span><br><span class="line">  * ⚠ 建议不要引用该类中的任何子类和成员变量，一但引用了非正式环境的属性，打包时混淆工具就不会移除该类，导致测试地址泄漏。&lt;/br&gt;</span><br><span class="line">  * Environment Switcher 在编译 Release 版本时，会自动隐藏测试环境地址。&lt;/br&gt;&lt;/br&gt;</span><br><span class="line">  *</span><br><span class="line">  * 建议将该类中所有被 &#123;@link Module&#125; 和 &#123;@link Environment&#125; 修饰的类或成员变量用 private 修饰，&lt;/br&gt;</span><br><span class="line">  * Environment Switcher 会在编译期间自动生成相应的 Module_XX 和 Environment_XX 静态常量。&lt;/br&gt;</span><br><span class="line">  * 例如：通过 EnvironmentSwitcher.MODULE_APP 就可以获取到 App 模块下相应的所有环境&lt;/br&gt;</span><br><span class="line">  */</span><br><span class="line">public class EnvironmentConfig &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">      * 整个 App 的环境</span><br><span class="line">      */</span><br><span class="line">    @Module</span><br><span class="line">    private class App &#123;</span><br><span class="line">        @Environment(url = &quot;https://gank.io/api/&quot;, isRelease = true, alias = &quot;正式&quot;)</span><br><span class="line">        private String online;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /**</span><br><span class="line">      * 特殊模块 Music 的环境</span><br><span class="line">      */</span><br><span class="line">    @Module(alias = &quot;音乐&quot;)</span><br><span class="line">    private class Music &#123;</span><br><span class="line">        @Environment(url = &quot;https://www.codexiaomai.top/api/&quot;, isRelease = true, alias = &quot;正式&quot;)</span><br><span class="line">        private String online;</span><br><span class="line">    </span><br><span class="line">        @Environment(url = &quot;http://test.codexiaomai.top/api/&quot;, alias = &quot;测试&quot;)</span><br><span class="line">        private String test;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /**</span><br><span class="line">      * 特殊模块 News 的环境</span><br><span class="line">      */</span><br><span class="line">    @Module(alias = &quot;新闻&quot;)</span><br><span class="line">    private class News &#123;</span><br><span class="line">        @Environment(url = &quot;http://news/release/&quot;, isRelease = true, alias = &quot;正式&quot;)</span><br><span class="line">        private String release;</span><br><span class="line">    </span><br><span class="line">        @Environment(url = &quot;http://news/test/&quot;, alias = &quot;测试&quot;)</span><br><span class="line">        private String test;</span><br><span class="line">    </span><br><span class="line">        @Environment(url = &quot;http://news/test1/&quot;)</span><br><span class="line">        private String test1;</span><br><span class="line">    </span><br><span class="line">        @Environment(url = &quot;http://news/sandbox/&quot;, alias = &quot;沙箱&quot;)</span><br><span class="line">        private String sandbox;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Module"><a href="#Module" class="headerlink" title="@Module"></a>@Module</h4><p>被它修饰的类或接口表示一个模块，编译时会自动生成相应模块的 <code>getXXEnvironment()</code> 和 <code>setXXEnvironment()</code> 方法。一个被 <code>@Module</code> 修饰的类中，可以有 n (n&gt;0) 个被 <code>@Environment</code> 修饰的属性，表示该模块中有 n 种环境。</p>
+<p>例如：上面的代码中，有三个类被 <code>@Module</code> 修饰，意味着有三个模块，其中 App 模块中，只有一个属性被 <code>@Environment</code> 修饰，表示该模块只有一种环境；而 Music 和 News 模块分别有 2 种和 4 种环境。</p>
+<p>此外 <code>@Module</code> 还有一个可选属性 <code>alias</code> ，用来指定该模块的别名。该值默认为空字符串。这个属性的主要目的是在切换环境 UI 页面显示中文名称。例如：Music 和 News 模块在切换环境页面中就会分别显示 “音乐” 和 “新闻”。</p>
+<blockquote>
+<p>注：如果你的项目中所有模块共用同一个 Host 地址，那么只需配置一个 Module 就可以了。</p>
+</blockquote>
+<h4 id="Environment"><a href="#Environment" class="headerlink" title="@Environment"></a>@Environment</h4><p>被它修饰的属性表示一个环境，必须指定 <code>url</code> 的值，此外还有两个可选属性：<code>isRelease</code> 和 <code>alias</code>。</p>
+<ul>
+<li><p>isRelease 是一个 boolean 型的属性，默认为 false，当值为 true 时，它就是所在 Module 的默认环境，以及 App 正式发布时的环境。<strong>一个 Module 中必须有且只有一个 Environment 的 isRelease 的值为 true，否则编译会失败。</strong> </p>
+<p>  例如：Music 模块中有两种环境分别是 online（正式）和 test （测试），因为 online 的 isRelease = true，所以它就是默认环境和App 正式发布时的环境。</p>
+</li>
+<li><p>alias 和 <code>@Module</code> 中的 alias 相似，用于在切换环境的UI页面展示该环境的名字，该值默认为空字符串，如果给它指定非空字符串，则环境的名字就被指定为 <code>alias</code> 的值。</p>
+</li>
+</ul>
+<blockquote>
+<p><font color="red"><strong>再次强调</strong>：一个 Module 中必须有且只有一个 Environment 的 isRelease 的值为 true，否则编译会失败</font>。 </p>
+</blockquote>
+<h3 id="点击菜单栏中的-“Build”-gt-“Rebuild-Project”，等待编译完成。"><a href="#点击菜单栏中的-“Build”-gt-“Rebuild-Project”，等待编译完成。" class="headerlink" title="点击菜单栏中的 “Build” -&gt; “Rebuild Project”，等待编译完成。"></a>点击菜单栏中的 “Build” -&gt; “Rebuild Project”，等待编译完成。</h3><p>到这里整个配置就算完成了，接下来就可以在项目中愉快的获取相应模块的环境地址了。</p>
+<h3 id="添加入口"><a href="#添加入口" class="headerlink" title="添加入口"></a>添加入口</h3><p>手动切换环境当然要有一个页面，这个页面 Environment Switcher 已经自动集成了，只需要添加一个入口跳转即可（这个入口只在 Debug 测试等内部版显示）。</p>
+<p>例如：在“我的”页面中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">	...</span><br><span class="line">	if (!BuildConfig.DEBUG) &#123;</span><br><span class="line">		// only show in debug</span><br><span class="line">		findViewById(R.id.bt_switch_environment).setVisibility(View.GONE);</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">        </span><br><span class="line">	findViewById(R.id.bt_switch_environment).setOnClickListener(new View.OnClickListener() &#123;</span><br><span class="line">		@Override</span><br><span class="line">		public void onClick(View view) &#123;</span><br><span class="line">			// entrance of switch environment</span><br><span class="line">			EnvironmentSwitchActivity.launch(getContext());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以使用 Environment Switcher 已经提供的 <code>EnvironmentSwitchActivity.launch(getContext())</code> 方法启动；当然你也可以通过 <code>startActivity(new Intent(getContext(), EnvironmentSwitchActivity.class))</code> 启动，看个人喜好了。</p>
+<h3 id="获取相应模块的环境地址："><a href="#获取相应模块的环境地址：" class="headerlink" title="获取相应模块的环境地址："></a>获取相应模块的环境地址：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String appEnvironment = EnvironmentSwitcher.getAppEnvironment(this, BuildConfig.DEBUG);</span><br><span class="line">String musicEnvironment = EnvironmentSwitcher.getMusicEnvironment(this, BuildConfig.DEBUG);</span><br><span class="line">String newsEnvironment = EnvironmentSwitcher.getNewsEnvironment(this, BuildConfig.DEBUG);</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取相应模块的环境实体类-since-1-4-："><a href="#获取相应模块的环境实体类-since-1-4-：" class="headerlink" title="获取相应模块的环境实体类(since 1.4)："></a>获取相应模块的环境实体类(since 1.4)：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EnvironmentBean appEnvironmentBean = EnvironmentSwitcher.getAppEnvironmentBean(this, BuildConfig.DEBUG);</span><br><span class="line">EnvironmentBean musicEnvironmentBean = EnvironmentSwitcher.getMusicEnvironmentBean(this, BuildConfig.DEBUG);</span><br><span class="line">EnvironmentBean newsEnvironmentBean = EnvironmentSwitcher.getNewsEnvironmentBean(this, BuildConfig.DEBUG);</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是获取相应模块的地址需要两个参数。</p>
+<p>第一个就是一个 Context 不用解释，因为 Environment Switcher 是用 SharedPreferences 进行存储数据的。</p>
+<p>第二个参数是一个 boolean 型的值，如果为 true 表示当前为 Debug 或测试等内部使用版本，此时获取到的地址是我们手动切换保存的地址；而如果为 false 表示当前为要发布给用户使用的版本，此时获取到的地址为我们在 @Environment 中指定 isRelease = true 的地址，手动切换的环境地址不再生效。</p>
+<h3 id="添加监听事件"><a href="#添加监听事件" class="headerlink" title="添加监听事件"></a>添加监听事件</h3><p>Environment Switcher 支持切换环境回调，你可以通过以下方法添加，需要注意的是不要忘记<strong>在不需要监听环境切换事件时移除监听事件</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity implements OnEnvironmentChangeListener&#123;</span><br><span class="line"></span><br><span class="line">    private static final String TAG = &quot;MainActivity&quot;;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        // 添加监听事件</span><br><span class="line">        EnvironmentSwitcher.addOnEnvironmentChangeListener(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onEnvironmentChanged(ModuleBean module, EnvironmentBean oldEnvironment, EnvironmentBean newEnvironment) &#123;</span><br><span class="line">        Log.e(TAG, module.getName() + &quot;由&quot; + oldEnvironment.getName() + &quot;环境，Url=&quot; + oldEnvironment.getUrl()</span><br><span class="line">                + &quot;,切换为&quot; + newEnvironment.getName() + &quot;环境，Url=&quot; + newEnvironment.getUrl());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDestroy() &#123;</span><br><span class="line">        super.onDestroy();</span><br><span class="line">        // 移除监听事件</span><br><span class="line">        EnvironmentSwitcher.removeOnEnvironmentChangeListener(this);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="切换SDK开发环境"><a href="#切换SDK开发环境" class="headerlink" title="切换SDK开发环境"></a>切换SDK开发环境</h3><p>我们在项目中一般会依赖第三方提供的SDK，而且这些SDK也会提供测试环境，如果要在App内切换环境，使用上面的方法就不行了。那该怎么办呢？</p>
+<p>例如我们的“直播”模块是引用的SDK，我们可以这样做：</p>
+<ol>
+<li><p>首先在 EnvironmentConfig.java 中配置”直播”模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class EnvironmentConfig &#123;</span><br><span class="line">     @Module(alias = &quot;直播&quot;)</span><br><span class="line">     private class Live &#123;</span><br><span class="line">         @Environment(url = &quot;online&quot;, isRelease = true, alias = &quot;正式&quot;)</span><br><span class="line">         private String online;</span><br><span class="line"></span><br><span class="line">         @Environment(url = &quot;test&quot;, alias = &quot;测试&quot;)</span><br><span class="line">         private String test;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>url 在这里只是用来区分环境，不用为真实的 url，但要保证同一模块中每个环境的 url 不同。</p>
+</blockquote>
+</li>
+<li><p>在 Application 中添加监听</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">EnvironmentSwitcher.addOnEnvironmentChangeListener(new OnEnvironmentChangeListener() &#123;</span><br><span class="line">     @Override</span><br><span class="line">     public void onEnvironmentChanged(ModuleBean module, EnvironmentBean oldEnvironment, EnvironmentBean newEnvironment) &#123;</span><br><span class="line">        if (module.equals(EnvironmentSwitcher.MODULE_LIVE)) &#123;</span><br><span class="line">            if (newEnvironment.equals(EnvironmentSwitcher.LIVE_ONLINE_ENVIRONMENT)) &#123;</span><br><span class="line">              // 调用 SDK 切换环境的方法，正式环境</span><br><span class="line">            &#125; else if (newEnvironment.equals(EnvironmentSwitcher.LIVE_TEST_ENVIRONMENT)) &#123;</span><br><span class="line">              // 调用 SDK 切换环境的方法，测试环境</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>利用 Environment Switcher 的环境切换回调，实现切换 SDK 环境。</p>
+</blockquote>
+</li>
+</ol>
+<p>好了，关于Environment Switcher 的介绍就到此为止吧，<a href="https://github.com/CodeXiaoMai/EnvironmentSwitcher" rel="external nofollow noopener noreferrer" target="_blank">更多使用介绍可参考Demo</a>，Demo 中有 Environment Switcher 结合 Retrofit 使用的详细实现过程。</p>
+<p><img src="/images/environment_switcher/5275145-b3529a5f32884ab9.gif" alt="Environment Switcher"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/开源/" rel="tag"># 开源</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/ConcurrentModificationException-异常分析与解决方法.html" rel="next" title="ConcurrentModificationException 异常分析与解决方法">
+                <i class="fa fa-chevron-left"></i> ConcurrentModificationException 异常分析与解决方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+              <a href="/字符编码的历史演变.html" rel="prev" title="字符编码的历史演变">
+                字符编码的历史演变 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="CodeXiaoMai">
+  <p class="site-author-name" itemprop="name">CodeXiaoMai</p>
+  <div class="site-description motion-element" itemprop="description">CodeXiaoMai的博客</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/codexiaomai" title="GitHub &rarr; https://github.com/codexiaomai" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:codexiaomai@foxmail.com" title="E-Mail &rarr; mailto:codexiaomai@foxmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么不用-Gradle"><span class="nav-number">1.</span> <span class="nav-text">为什么不用 Gradle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用方法"><span class="nav-number">2.</span> <span class="nav-text">使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置项目的-build-gradle"><span class="nav-number">2.1.</span> <span class="nav-text">配置项目的 build.gradle</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#java-版"><span class="nav-number">2.1.1.</span> <span class="nav-text">java 版</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kotlin-版"><span class="nav-number">2.1.2.</span> <span class="nav-text">kotlin 版</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写-EnvironmentConfig-文件"><span class="nav-number">2.2.</span> <span class="nav-text">编写 EnvironmentConfig 文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Module"><span class="nav-number">2.2.1.</span> <span class="nav-text">@Module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Environment"><span class="nav-number">2.2.2.</span> <span class="nav-text">@Environment</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#点击菜单栏中的-“Build”-gt-“Rebuild-Project”，等待编译完成。"><span class="nav-number">2.3.</span> <span class="nav-text">点击菜单栏中的 “Build” -&gt; “Rebuild Project”，等待编译完成。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加入口"><span class="nav-number">2.4.</span> <span class="nav-text">添加入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取相应模块的环境地址："><span class="nav-number">2.5.</span> <span class="nav-text">获取相应模块的环境地址：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取相应模块的环境实体类-since-1-4-："><span class="nav-number">2.6.</span> <span class="nav-text">获取相应模块的环境实体类(since 1.4)：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加监听事件"><span class="nav-number">2.7.</span> <span class="nav-text">添加监听事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#切换SDK开发环境"><span class="nav-number">2.8.</span> <span class="nav-text">切换SDK开发环境</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CodeXiaoMai</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  <script>
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var entries = [];
+      var $visitors = $('.leancloud_visitors');
+
+      $visitors.each(function() {
+        entries.push( $(this).attr('id').trim() );
+      });
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url: { '$in': entries } }) })
+        .done(function({ results }) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if (countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+  }
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'GJy8DOn0XawyF4vcnx9MfnaM')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: `https://${api_server}/1.1${url}`,
+              headers: {
+                'X-LC-Id': 'GJy8DOn0XawyF4vcnx9MfnaM',
+                'X-LC-Key': '5oGBzj80wrkx5F6NsFBF3vm7',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          if (CONFIG.page.isPost) {
+            const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+            if (localhost.test(document.URL)) return;
+            addCount(Counter);
+          } else {
+            if ($('.post-title-link').length >= 1) {
+              showTime(Counter);
+            }
+          }
+        });
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+    
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: 'b7a4f14b3ce2255c6f6c',
+    clientSecret: '6459b8daea37c31c03f4e9fb46dcbcfd2bbbb801',
+    repo: 'codexiaomai.github.io',
+    owner: 'codexiaomai',
+    admin: ['codexiaomai'],
+    id: md5(location.pathname),
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+</body>
+</html>
