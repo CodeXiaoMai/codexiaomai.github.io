@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[个人博客进化史]]></title>
     <url>%2Fposts%2F61f01eb0.html</url>
-    <content type="text"><![CDATA[个人博客是一个不断进化的过程，在这里记录下博客变化的点点滴滴。 2019年08月05日 文章链接使用 hexo-abbrlink 支持文章 Id。 2019年05月28日 开始使用 Hexo 搭建个人博客。]]></content>
+    <content type="text"><![CDATA[个人博客是一个不断进化的过程，在这里记录下博客变化的点点滴滴。 2019年08月05日 文章链接使用 hexo-abbrlink 支持文章 Id。 使用 hexo-tag-aplayer 支持背景音乐。 2019年08月01日 SEO 优化 使用 hexo-generator-sitemap 和 hexo-generator-baidu-sitemap 生成站点地图 使用 hexo-symbols-count-time 支持字数统计 使用 hexo-generator-searchdb 支持站内搜索 2019年05月28日 开始使用 Hexo 搭建个人博客。]]></content>
       <categories>
         <category>其他</category>
       </categories>
