@@ -8,7 +8,7 @@ Disallow: /css/
 Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
-Disallow: /404/
+Disallow: /404.html
 Disallow: /about/
 Disallow: /private/
 

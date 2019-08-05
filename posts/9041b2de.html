@@ -57,10 +57,10 @@
 </script>
 
   <meta name="description" content="本文主要从源码的角度分析 ConcurrentModificationException 发生的原因，以及解决办法。">
-<meta name="keywords" content="集合">
+<meta name="keywords" content="集合,ConcurrentModificationException,ArrayList,LinkedList">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ConcurrentModificationException 异常分析与解决方法">
-<meta property="og:url" content="https://codexiaomai.github.io/ConcurrentModificationException-异常分析与解决方法.html">
+<meta property="og:url" content="https://codexiaomai.github.io/posts/9041b2de.html">
 <meta property="og:site_name" content="CodeXiaoMai">
 <meta property="og:description" content="本文主要从源码的角度分析 ConcurrentModificationException 发生的原因，以及解决办法。">
 <meta property="og:locale" content="zh-CN">
@@ -68,12 +68,12 @@
 <meta property="og:image" content="https://img.shields.io/github/forks/CodeXiaoMai/EnvironmentSwitcher.svg">
 <meta property="og:image" content="https://img.shields.io/github/watchers/CodeXiaoMai/EnvironmentSwitcher.svg">
 <meta property="og:image" content="https://codexiaomai.github.io/images/15639694328079/ListIterator.png">
-<meta property="og:updated_time" content="2019-08-04T11:43:32.000Z">
+<meta property="og:updated_time" content="2019-08-05T12:59:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ConcurrentModificationException 异常分析与解决方法">
 <meta name="twitter:description" content="本文主要从源码的角度分析 ConcurrentModificationException 发生的原因，以及解决办法。">
 <meta name="twitter:image" content="https://img.shields.io/github/stars/CodeXiaoMai/EnvironmentSwitcher.svg">
-  <link rel="canonical" href="https://codexiaomai.github.io/ConcurrentModificationException-异常分析与解决方法">
+  <link rel="canonical" href="https://codexiaomai.github.io/posts/9041b2de">
 
 
 <script id="page-configurations">
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://codexiaomai.github.io/ConcurrentModificationException-异常分析与解决方法.html">
+    <link itemprop="mainEntityOfPage" href="https://codexiaomai.github.io/posts/9041b2de.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CodeXiaoMai">
@@ -311,7 +311,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-04 19:43:32" itemprop="dateModified" datetime="2019-08-04T19:43:32+08:00">2019-08-04</time>
+                <time title="修改时间：2019-08-05 20:59:27" itemprop="dateModified" datetime="2019-08-05T20:59:27+08:00">2019-08-05</time>
               </span>
             
           
@@ -339,7 +339,7 @@
           
 
           
-            <span id="/ConcurrentModificationException-异常分析与解决方法.html" class="post-meta-item leancloud_visitors" data-flag-title="ConcurrentModificationException 异常分析与解决方法">
+            <span id="/posts/9041b2de.html" class="post-meta-item leancloud_visitors" data-flag-title="ConcurrentModificationException 异常分析与解决方法">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -471,6 +471,12 @@
         <div class="post-tags">
             <a href="/tags/集合/" rel="tag"># 集合</a>
           
+            <a href="/tags/ConcurrentModificationException/" rel="tag"># ConcurrentModificationException</a>
+          
+            <a href="/tags/ArrayList/" rel="tag"># ArrayList</a>
+          
+            <a href="/tags/LinkedList/" rel="tag"># LinkedList</a>
+          
         </div>
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
@@ -479,7 +485,7 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-              <a href="/EnvironmentSwitcher.html" rel="prev" title="EnvironmentSwitcher">
+              <a href="/posts/1d56b016.html" rel="prev" title="EnvironmentSwitcher">
                 EnvironmentSwitcher <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -538,7 +544,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -559,7 +565,11 @@
         
           
         
-        <span class="site-state-item-count">3</span>
+          
+        
+          
+        
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -580,7 +590,15 @@
         
           
         
-        <span class="site-state-item-count">3</span>
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
