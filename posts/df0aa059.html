@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+  <meta name="google-site-verification" content="BVUkBoL2T9wdh_d3Mk8V_x5QuHXXVnp2-bgFNTUzUMs">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="关于刘海屏的适配方案有两种：  可以在刘海屏区域展示，即使部分内容被『吃掉』也没关系； 不可以在刘海屏区域展示，避免重要的信息不能被用户看到，影响使用。  本文针对这两种情况进行分析：">
+<meta name="keywords" content="Android,屏幕适配,刘海屏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="全面屏和刘海屏适配">
+<meta property="og:url" content="https://codexiaomai.github.io/posts/df0aa059.html">
+<meta property="og:site_name" content="CodeXiaoMai">
+<meta property="og:description" content="关于刘海屏的适配方案有两种：  可以在刘海屏区域展示，即使部分内容被『吃掉』也没关系； 不可以在刘海屏区域展示，避免重要的信息不能被用户看到，影响使用。  本文针对这两种情况进行分析：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://codexiaomai.github.io/images/15673240759252/display_in_cutout.gif">
+<meta property="og:image" content="https://codexiaomai.github.io/images/15673240759252/no_display_in_cutout.gif">
+<meta property="og:image" content="https://codexiaomai.github.io/images/15673240759252/check.png">
+<meta property="og:image" content="https://codexiaomai.github.io/images/15673240759252/height.png">
+<meta property="og:updated_time" content="2019-09-10T12:26:47.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="全面屏和刘海屏适配">
+<meta name="twitter:description" content="关于刘海屏的适配方案有两种：  可以在刘海屏区域展示，即使部分内容被『吃掉』也没关系； 不可以在刘海屏区域展示，避免重要的信息不能被用户看到，影响使用。  本文针对这两种情况进行分析：">
+<meta name="twitter:image" content="https://codexiaomai.github.io/images/15673240759252/display_in_cutout.gif">
+  <link rel="canonical" href="https://codexiaomai.github.io/posts/df0aa059">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>全面屏和刘海屏适配 | CodeXiaoMai</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CodeXiaoMai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">CodeXiaoMai的博客</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://codexiaomai.github.io/posts/df0aa059.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CodeXiaoMai">
+      <meta itemprop="description" content="CodeXiaoMai的博客">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CodeXiaoMai">
+    </span>
+      <header class="post-header">
+
+        
+          <h2 class="post-title" itemprop="name headline">全面屏和刘海屏适配
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-10 20:17:24 / 修改时间：20:26:47" itemprop="dateCreated datePublished" datetime="2019-09-10T20:17:24+08:00">2019-09-10</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span id="/posts/df0aa059.html" class="post-meta-item leancloud_visitors" data-flag-title="全面屏和刘海屏适配">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          <br>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">15k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>关于刘海屏的适配方案有两种：</p>
+<ol>
+<li>可以在刘海屏区域展示，即使部分内容被『吃掉』也没关系；</li>
+<li>不可以在刘海屏区域展示，避免重要的信息不能被用户看到，影响使用。</li>
+</ol>
+<p>本文针对这两种情况进行分析：</p>
+<a id="more"></a>
+
+<h2 id="知识储备"><a href="#知识储备" class="headerlink" title="知识储备"></a>知识储备</h2><h3 id="window-decorView-systemUiVisibility-的可选值（部分）"><a href="#window-decorView-systemUiVisibility-的可选值（部分）" class="headerlink" title="window.decorView.systemUiVisibility 的可选值（部分）"></a>window.decorView.systemUiVisibility 的可选值（部分）</h3><ul>
+<li><p>View.SYSTEM_UI_FLAG_VISIBLE</p>
+<p>  默认标记。显示状态栏和导航栏，Activity 正常显示。</p>
+</li>
+<li><p>View.INVISIBLE</p>
+<p>  隐藏状态栏，同时Activity会伸展全屏显示。</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_LOW_PROFILE</p>
+<p>  低调模式, 会隐藏不重要的状态栏图标</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_LAYOUT_STABLE</p>
+<p>  保持整个View稳定, 常和控制System UI悬浮, 隐藏的Flags共用, 使View不会因为System UI的变化而重新layout</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_FULLSCREEN</p>
+<p>  状态栏隐藏，Activity全屏显示。效果同设置WindowManager.LayoutParams.FLAG_FULLSCREEN</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN</p>
+<p>  视图延伸至状态栏区域，状态栏上浮于视图之上</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_HIDE_NAVIGATION</p>
+<p>  隐藏导航栏</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION</p>
+<p>  视图延伸至导航栏区域，导航栏上浮于视图之上</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_IMMERSIVE</p>
+<p>  沉浸模式, 隐藏状态栏和导航栏, 并且在第一次会弹泡提醒, 并且在状态栏区域滑动可以呼出状态栏（这样会清除之前设置的View.SYSTEM_UI_FLAG_FULLSCREEN 或 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION标志）。使之生效，需要和 View.SYSTEM_UI_FLAG_FULLSCREEN，View.SYSTEM_UI_FLAG_HIDE_NAVIGATION 中的一个或两个同时设置。</p>
+</li>
+<li><p>View.SYSTEM_UI_FLAG_IMMERSIVE_STIKY</p>
+<p>  与上面唯一的区别是, 呼出隐藏的状态栏后不会清除之前设置的View.SYSTEM_UI_FLAG_FULLSCREEN或View.SYSTEM_UI_FLAG_HIDE_NAVIGATION标志，在一段时间后将再次隐藏系统栏）。</p>
+</li>
+</ul>
+<h3 id="layoutInDisplayCutoutMode（Android-P-提供）"><a href="#layoutInDisplayCutoutMode（Android-P-提供）" class="headerlink" title="layoutInDisplayCutoutMode（Android P 提供）"></a>layoutInDisplayCutoutMode（Android P 提供）</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>模式说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT</td>
+<td>只有当DisplayCutout完全包含在系统栏中时，才允许窗口延伸到DisplayCutout区域。 否则，窗口布局不与DisplayCutout区域重叠。</td>
+</tr>
+<tr>
+<td>LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER</td>
+<td>该窗口决不允许与DisplayCutout区域重叠。</td>
+</tr>
+<tr>
+<td>LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</td>
+<td>该窗口始终允许延伸到屏幕短边上的DisplayCutout区域。</td>
+</tr>
+</tbody></table>
+<h2 id="在刘海屏区域内展示内容，部分内容被『吃掉』不影响"><a href="#在刘海屏区域内展示内容，部分内容被『吃掉』不影响" class="headerlink" title="在刘海屏区域内展示内容，部分内容被『吃掉』不影响"></a>在刘海屏区域内展示内容，部分内容被『吃掉』不影响</h2><p>效果如下：</p>
+<p><img src="/images/15673240759252/display_in_cutout.gif" alt="在刘海屏内显示"></p>
+<p>这种方案比较好适配，如果是 Android 9.0 及以上系统，使用官方提供的方案，否则设置布局延伸到状态栏即可。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.xiaomai.demo</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.graphics.Color</span><br><span class="line"><span class="keyword">import</span> android.os.Build</span><br><span class="line"><span class="keyword">import</span> android.os.Bundle</span><br><span class="line"><span class="keyword">import</span> android.support.v7.app.AppCompatActivity</span><br><span class="line"><span class="keyword">import</span> android.view.View</span><br><span class="line"><span class="keyword">import</span> android.view.WindowManager</span><br><span class="line"><span class="keyword">import</span> kotlinx.android.synthetic.main.full_screen.*</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FullActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line"></span><br><span class="line">        setContentView(R.layout.full_screen)</span><br><span class="line"></span><br><span class="line">        showTitleBar()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果系统版本大于等于 Android 9.0，系统支持刘海屏, 否则部分国产手机可能在 Android 8.0 就支持了刘海屏，需要在 manifest 中配置。</span></span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.P) &#123;</span><br><span class="line">            window.attributes = window.attributes.apply &#123;</span><br><span class="line">                layoutInDisplayCutoutMode =</span><br><span class="line">                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> isShow = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">        touchView.setOnClickListener &#123;</span><br><span class="line">            isShow = !isShow</span><br><span class="line">            <span class="keyword">if</span> (isShow) &#123;</span><br><span class="line">                showTitleBar()</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                hideTitleBar()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">showTitleBar</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// 设置状态栏透明</span></span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</span><br><span class="line">            window.statusBarColor = Color.TRANSPARENT</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">            window.decorView.systemUiVisibility =</span><br><span class="line">                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or <span class="comment">// 视图延伸至导航栏区域，导航栏上浮于视图之上</span></span><br><span class="line">                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN <span class="comment">// 视图延伸至状态栏区域，状态栏上浮于视图之上</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 已知问题，在 Vivo X21A 全屏适配有问题</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">hideTitleBar</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">var</span> options = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION <span class="comment">// 隐藏导航栏</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">            options = options or</span><br><span class="line">                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or <span class="comment">// 视图延伸至导航栏区域，导航栏上浮于视图之上</span></span><br><span class="line">                    View.SYSTEM_UI_FLAG_FULLSCREEN or <span class="comment">// 隐藏状态栏</span></span><br><span class="line">                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN <span class="comment">// 视图延伸至状态栏区域，状态栏上浮于视图之上</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.KITKAT) &#123;</span><br><span class="line">            options = options or</span><br><span class="line">                    View.SYSTEM_UI_FLAG_IMMERSIVE <span class="comment">// 沉浸模式, 隐藏状态栏和导航栏, 并且在第一次会弹泡提醒, 并且在状态栏区域滑动可以呼出状态栏</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        window.decorView.systemUiVisibility = options</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="内容重要，不能在刘海屏区域展示"><a href="#内容重要，不能在刘海屏区域展示" class="headerlink" title="内容重要，不能在刘海屏区域展示"></a>内容重要，不能在刘海屏区域展示</h2><p><img src="/images/15673240759252/no_display_in_cutout.gif" alt="no_display_in_cutout"></p>
+<p>思路：首先检查设备是否是刘海屏，如果是的话则设置不在状态栏显示内容，如果不是话则可以在状态栏显示。</p>
+<p>检测设备是否是刘海屏的思路：</p>
+<p><img src="/images/15673240759252/check.png" alt="check"></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FullActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> TAG = <span class="string">"FullActivity"</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> hasDisplayCutout = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">set</span>(value) &#123;</span><br><span class="line">            field = value</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (value) &#123;</span><br><span class="line">                <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.P) &#123;</span><br><span class="line">                    window.attributes = window.attributes.apply &#123;</span><br><span class="line">                        layoutInDisplayCutoutMode =</span><br><span class="line">                            WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 设置状态栏为黑色</span></span><br><span class="line">                <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</span><br><span class="line">                    window.statusBarColor = Color.BLACK</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 设置状态栏透明</span></span><br><span class="line">                <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) &#123;</span><br><span class="line">                    window.statusBarColor = Color.TRANSPARENT</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            showTitleBar()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 监查是否是刘海屏</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">checkDisplayCutout</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.P) &#123;</span><br><span class="line">            <span class="keyword">val</span> decorView = window.decorView</span><br><span class="line"></span><br><span class="line">            decorView.post &#123;</span><br><span class="line">                <span class="keyword">val</span> displayCutout = decorView.rootWindowInsets.displayCutout</span><br><span class="line"></span><br><span class="line">                displayCutout?.apply &#123;</span><br><span class="line">                    Log.e(TAG, <span class="string">"安全区域距离屏幕左边的距离 SafeInsetLeft:"</span> + displayCutout.safeInsetLeft)</span><br><span class="line">                    Log.e(TAG, <span class="string">"安全区域距离屏幕右部的距离 SafeInsetRight:"</span> + displayCutout.safeInsetRight)</span><br><span class="line">                    Log.e(TAG, <span class="string">"安全区域距离屏幕顶部的距离 SafeInsetTop:"</span> + displayCutout.safeInsetTop)</span><br><span class="line">                    Log.e(TAG, <span class="string">"安全区域距离屏幕底部的距离 SafeInsetBottom:"</span> + displayCutout.safeInsetBottom)</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                hasDisplayCutout = displayCutout?.safeInsetTop ?: <span class="number">0</span> &gt; <span class="number">0</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            hasDisplayCutout = DisplayCutoutUtils.isSupportDisplayCutout(<span class="keyword">this</span><span class="symbol">@FullActivity</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line"></span><br><span class="line">        setContentView(R.layout.full_screen)</span><br><span class="line"></span><br><span class="line">        checkDisplayCutout()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> isShow = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">        touchView.setOnClickListener &#123;</span><br><span class="line">            isShow = !isShow</span><br><span class="line">            <span class="keyword">if</span> (isShow) &#123;</span><br><span class="line">                showTitleBar()</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                hideTitleBar()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">showTitleBar</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">var</span> newOptions = window.decorView.systemUiVisibility</span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">            newOptions = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (hasDisplayCutout) &#123;</span><br><span class="line">            <span class="comment">// do nothing</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">                newOptions = newOptions or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        window.decorView.systemUiVisibility = newOptions</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">hideTitleBar</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">var</span> newOptions = window.decorView.systemUiVisibility</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">            newOptions =</span><br><span class="line">                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (hasDisplayCutout) &#123;</span><br><span class="line">            <span class="comment">// do nothing</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">                newOptions = (newOptions</span><br><span class="line">                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN</span><br><span class="line">                        or View.SYSTEM_UI_FLAG_FULLSCREEN)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.KITKAT) &#123;</span><br><span class="line">                newOptions = newOptions or View.SYSTEM_UI_FLAG_IMMERSIVE</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        window.decorView.systemUiVisibility = newOptions</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以下是通过反射获取 Android P 版本以下的设备是否是刘海屏的代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">object</span> DisplayCutoutUtils &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">const</span> <span class="keyword">val</span> TAG = <span class="string">"DisplayCutoutUtils"</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> Number.<span class="title">dp2Pixels</span><span class="params">()</span></span> =</span><br><span class="line">        TypedValue.applyDimension(</span><br><span class="line">            TypedValue.COMPLEX_UNIT_DIP,</span><br><span class="line">            <span class="keyword">this</span>.toFloat(),</span><br><span class="line">            Resources.getSystem().displayMetrics</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">isSupportDisplayCutout</span><span class="params">(context: <span class="type">Context</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> getDisplayCutoutHeight(context) &gt; <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//调用该方法，可以获取刘海屏的px值，没刘海屏则返回0</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">getDisplayCutoutHeight</span><span class="params">(context: <span class="type">Context</span>)</span></span>: <span class="built_in">Float</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> displayCutoutHeight = <span class="number">0.0f</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//判断手机厂商，目前8.0只有华为、小米、oppo、vivo适配了刘海屏</span></span><br><span class="line">        <span class="keyword">val</span> phoneManufacturer = Build.BRAND.toLowerCase(Locale.CHINESE)</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">"huawei"</span> == phoneManufacturer) &#123;</span><br><span class="line">            <span class="comment">//huawei,长度为length,单位px</span></span><br><span class="line">            <span class="keyword">val</span> haveDisplayCutoutEMUI = hasDisplayCutoutInEMUI(context)</span><br><span class="line">            <span class="keyword">if</span> (haveDisplayCutoutEMUI) &#123;</span><br><span class="line">                <span class="keyword">val</span> displayCutout: IntArray = getDisplayCutoutSizeInEMUI(context)</span><br><span class="line">                displayCutoutHeight = displayCutout[<span class="number">1</span>].toFloat()</span><br><span class="line"></span><br><span class="line">                Log.e(</span><br><span class="line">                    TAG,</span><br><span class="line">                    <span class="string">"haveDisplayCutoutInEMUI: <span class="variable">$haveDisplayCutoutEMUI</span>, displayCutout: <span class="variable">$displayCutout</span>"</span></span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"xiaomi"</span> == phoneManufacturer) &#123;</span><br><span class="line">            <span class="comment">//xiaomi,单位px</span></span><br><span class="line">            <span class="keyword">val</span> haveDisplayCutoutInMIUI = getDisplayCutoutInMIUI(<span class="string">"ro.miui.notch"</span>, <span class="number">0</span>) == <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> (haveDisplayCutoutInMIUI) &#123;</span><br><span class="line">                <span class="keyword">val</span> resourceId = context.resources.getIdentifier(<span class="string">"notch_height"</span>, <span class="string">"dimen"</span>, <span class="string">"android"</span>)</span><br><span class="line">                <span class="keyword">var</span> result = <span class="number">0</span></span><br><span class="line">                <span class="keyword">if</span> (resourceId &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    result = context.resources.getDimensionPixelSize(resourceId)</span><br><span class="line">                &#125;</span><br><span class="line">                displayCutoutHeight = result.toFloat()</span><br><span class="line"></span><br><span class="line">                Log.e(</span><br><span class="line">                    TAG,</span><br><span class="line">                    <span class="string">"haveDisplayCutoutInMIUI: <span class="variable">$haveDisplayCutoutInMIUI</span>, displayCutoutHeight: <span class="variable">$displayCutoutHeight</span>"</span></span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"vivo"</span> == phoneManufacturer) &#123;</span><br><span class="line">            <span class="comment">//vivo,单位dp，高度27dp</span></span><br><span class="line">            <span class="keyword">val</span> haveDisplayCutoutInVIVO = hasDisplayCutoutInVivo(context)</span><br><span class="line">            <span class="keyword">if</span> (haveDisplayCutoutInVIVO) &#123;</span><br><span class="line">                displayCutoutHeight = <span class="number">27</span>.dp2Pixels()</span><br><span class="line">                Log.e(</span><br><span class="line">                    TAG,</span><br><span class="line">                    <span class="string">"haveDisplayCutoutInVIVO: <span class="variable">$haveDisplayCutoutInVIVO</span>, displayCutoutHeight: <span class="variable">$displayCutoutHeight</span>"</span></span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"oppo"</span> == phoneManufacturer) &#123;</span><br><span class="line">            <span class="comment">//oppo</span></span><br><span class="line">            <span class="keyword">val</span> haveDisplayCutoutInOPPO =</span><br><span class="line">                context.packageManager.hasSystemFeature(<span class="string">"com.oppo.feature.screen.heteromorphism"</span>)</span><br><span class="line">            <span class="keyword">if</span> (haveDisplayCutoutInOPPO) &#123;</span><br><span class="line">                displayCutoutHeight = <span class="number">80f</span></span><br><span class="line">                Log.e(</span><br><span class="line">                    TAG,</span><br><span class="line">                    <span class="string">"haveDisplayCutoutInOPPO: <span class="variable">$haveDisplayCutoutInOPPO</span>, displayCutoutHeight: <span class="variable">$displayCutoutHeight</span>"</span></span><br><span class="line">                )</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> displayCutoutHeight</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//huawei</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">hasDisplayCutoutInEMUI</span><span class="params">(context: <span class="type">Context</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> ret = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">val</span> cl = context.classLoader</span><br><span class="line">            <span class="keyword">val</span> hwNotchSizeUtilClass = cl.loadClass(<span class="string">"com.huawei.android.util.HwNotchSizeUtil"</span>)</span><br><span class="line">            <span class="keyword">val</span> hasNotchInScreenMethod = hwNotchSizeUtilClass.getMethod(<span class="string">"hasNotchInScreen"</span>)</span><br><span class="line">            ret = hasNotchInScreenMethod.invoke(hwNotchSizeUtilClass) <span class="keyword">as</span> <span class="built_in">Boolean</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: ClassNotFoundException) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"hasDisplayCutoutInEMUI ClassNotFoundException"</span>)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: NoSuchMethodException) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"hasDisplayCutoutInEMUI NoSuchMethodException"</span>)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"hasDisplayCutoutInEMUI Exception"</span>)</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ret</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">getDisplayCutoutSizeInEMUI</span><span class="params">(context: <span class="type">Context</span>)</span></span>: IntArray &#123;</span><br><span class="line">        <span class="keyword">var</span> ret = intArrayOf(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">val</span> cl = context.classLoader</span><br><span class="line">            <span class="keyword">val</span> hwNotchSizeUtilClass = cl.loadClass(<span class="string">"com.huawei.android.util.HwNotchSizeUtil"</span>)</span><br><span class="line">            <span class="keyword">val</span> getNotchSizeMethod = hwNotchSizeUtilClass.getMethod(<span class="string">"getNotchSize"</span>)</span><br><span class="line">            ret = getNotchSizeMethod.invoke(hwNotchSizeUtilClass) <span class="keyword">as</span> IntArray</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: ClassNotFoundException) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"getDisplayCutoutSizeInEMUI ClassNotFoundException"</span>)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: NoSuchMethodException) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"getDisplayCutoutSizeInEMUI NoSuchMethodException"</span>)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"getDisplayCutoutSizeInEMUI Exception"</span>)</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ret</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">getDisplayCutoutInMIUI</span><span class="params">(key: <span class="type">String</span>, def: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> getIntMethod: Method? = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (getIntMethod == <span class="literal">null</span>) &#123;</span><br><span class="line">                getIntMethod = Class.forName(<span class="string">"android.os.SystemProperties"</span>)</span><br><span class="line">                    .getMethod(<span class="string">"getInt"</span>, String::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>, <span class="type">Int::class.javaPrimitiveType)</span></span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> (getIntMethod?.invoke(<span class="literal">null</span>, key, def) <span class="keyword">as</span>? <span class="built_in">Int</span>)?.toInt() ?: <span class="number">0</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"Platform error: <span class="variable">$e</span>"</span>)</span><br><span class="line">            <span class="keyword">return</span> def</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">hasDisplayCutoutInVivo</span><span class="params">(context: <span class="type">Context</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> ret = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">val</span> classLoader = context.classLoader</span><br><span class="line">            <span class="keyword">val</span> ftFeatureClass = classLoader.loadClass(<span class="string">"android.util.FtFeature"</span>)</span><br><span class="line">            <span class="keyword">val</span> isFeatureSupportMethod =</span><br><span class="line">                ftFeatureClass.getMethod(<span class="string">"isFeatureSupport"</span>, <span class="built_in">Int</span>::<span class="class"><span class="keyword">class</span>.<span class="title">javaPrimitiveType</span>!!)</span></span><br><span class="line">            ret = isFeatureSupportMethod.invoke(ftFeatureClass, <span class="number">0x00000020</span>) <span class="keyword">as</span> <span class="built_in">Boolean</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: ClassNotFoundException) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"hasDisplayCutoutInVivo ClassNotFoundException"</span>)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: NoSuchMethodException) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"hasDisplayCutoutInVivo NoSuchMethodException"</span>)</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"hasDisplayCutoutInVivo Exception"</span>)</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ret</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="带虚拟导航的-Pad-设备"><a href="#带虚拟导航的-Pad-设备" class="headerlink" title="带虚拟导航的 Pad 设备"></a>带虚拟导航的 Pad 设备</h2><p>有的 Pad 在横屏时，虚拟导航在屏幕右侧，而有的在屏幕下方。有两种计算屏幕宽高的方法，一种包含虚拟导航栏，一种不包含。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getScreenHeight</span><span class="params">()</span></span> = Resources.getSystem().displayMetrics.heightPixels</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getScreenWidth</span><span class="params">()</span></span> = Resources.getSystem().displayMetrics.widthPixels</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 包含虚拟导航栏</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getRealScreenHeight</span><span class="params">(context: <span class="type">Context</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN_MR1) &#123;</span><br><span class="line">        <span class="keyword">val</span> windowManager = context.getSystemService(Context.WINDOW_SERVICE) <span class="keyword">as</span> WindowManager</span><br><span class="line">        <span class="keyword">val</span> display = windowManager.defaultDisplay</span><br><span class="line">        <span class="keyword">val</span> metrics = DisplayMetrics()</span><br><span class="line">        display.getRealMetrics(metrics)</span><br><span class="line">        metrics.heightPixels</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        getScreenHeight()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 包含虚拟导航栏</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getRealScreenWidth</span><span class="params">(context: <span class="type">Context</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN_MR1) &#123;</span><br><span class="line">        <span class="keyword">val</span> windowManager = context.getSystemService(Context.WINDOW_SERVICE) <span class="keyword">as</span> WindowManager</span><br><span class="line">        <span class="keyword">val</span> display = windowManager.defaultDisplay</span><br><span class="line">        <span class="keyword">val</span> metrics = DisplayMetrics()</span><br><span class="line">        display.getRealMetrics(metrics)</span><br><span class="line">        metrics.widthPixels</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        getScreenWidth()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/15673240759252/height.png" alt="height"></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://developer.android.com/guide/topics/display-cutout" rel="external nofollow noopener noreferrer" target="_blank">https://developer.android.com/guide/topics/display-cutout</a></li>
+<li><a href="https://juejin.im/post/5b1930835188257d7541ba33" rel="external nofollow noopener noreferrer" target="_blank">https://juejin.im/post/5b1930835188257d7541ba33</a></li>
+<li><a href="https://dev.mi.com/console/doc/detail?pId=1293" rel="external nofollow noopener noreferrer" target="_blank">MIUI 开发文档</a></li>
+<li><a href="https://dev.vivo.com.cn/documentCenter/doc/135" rel="external nofollow noopener noreferrer" target="_blank">Vivo 开发文档</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/屏幕适配/" rel="tag"># 屏幕适配</a>
+          
+            <a href="/tags/刘海屏/" rel="tag"># 刘海屏</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/posts/a5f0e43e.html" rel="next" title="Dialog 中监听键盘弹出与收起事件">
+                <i class="fa fa-chevron-left"></i> Dialog 中监听键盘弹出与收起事件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="CodeXiaoMai">
+  <p class="site-author-name" itemprop="name">CodeXiaoMai</p>
+  <div class="site-description motion-element" itemprop="description">CodeXiaoMai的博客</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/codexiaomai" title="GitHub &rarr; https://github.com/codexiaomai" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:codexiaomai@foxmail.com" title="E-Mail &rarr; mailto:codexiaomai@foxmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#知识储备"><span class="nav-number">1.</span> <span class="nav-text">知识储备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#window-decorView-systemUiVisibility-的可选值（部分）"><span class="nav-number">1.1.</span> <span class="nav-text">window.decorView.systemUiVisibility 的可选值（部分）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#layoutInDisplayCutoutMode（Android-P-提供）"><span class="nav-number">1.2.</span> <span class="nav-text">layoutInDisplayCutoutMode（Android P 提供）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在刘海屏区域内展示内容，部分内容被『吃掉』不影响"><span class="nav-number">2.</span> <span class="nav-text">在刘海屏区域内展示内容，部分内容被『吃掉』不影响</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内容重要，不能在刘海屏区域展示"><span class="nav-number">3.</span> <span class="nav-text">内容重要，不能在刘海屏区域展示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#带虚拟导航的-Pad-设备"><span class="nav-number">4.</span> <span class="nav-text">带虚拟导航的 Pad 设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考链接"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CodeXiaoMai</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  <script>
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var entries = [];
+      var $visitors = $('.leancloud_visitors');
+
+      $visitors.each(function() {
+        entries.push( $(this).attr('id').trim() );
+      });
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url: { '$in': entries } }) })
+        .done(function({ results }) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if (countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+  }
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'GJy8DOn0XawyF4vcnx9MfnaM-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: `https://${api_server}/1.1${url}`,
+              headers: {
+                'X-LC-Id': 'GJy8DOn0XawyF4vcnx9MfnaM-gzGzoHsz',
+                'X-LC-Key': '5oGBzj80wrkx5F6NsFBF3vm7',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          if (CONFIG.page.isPost) {
+            const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+            if (localhost.test(document.URL)) return;
+            addCount(Counter);
+          } else {
+            if ($('.post-title-link').length >= 1) {
+              showTime(Counter);
+            }
+          }
+        });
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+    
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: 'b7a4f14b3ce2255c6f6c',
+    clientSecret: '6459b8daea37c31c03f4e9fb46dcbcfd2bbbb801',
+    repo: 'codexiaomai.github.io',
+    owner: 'codexiaomai',
+    admin: ['codexiaomai'],
+    id: md5(location.pathname),
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+
+  
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+
+  
+  <script type="text/javascript" src="/js/hexo_resize_image.js"></script>
+</body>
+</html>
