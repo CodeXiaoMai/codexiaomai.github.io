@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="generator" content="Hexo 3.9.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+  <meta name="google-site-verification" content="BVUkBoL2T9wdh_d3Mk8V_x5QuHXXVnp2-bgFNTUzUMs">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    save_scroll: false,
+    copycode: {"enable":true,"show_result":true,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="今天是 2019年09月13日，农历八月十五。没错今天是中秋节，而且对我来说，今年的中秋不一样🖕。 故事是这样的 —— 中秋前一天的晚上线上发现了问题，在家改bug到后半夜。中秋当天上午早上又接到线上的问题反馈，于是在家与其他几个小伙伴一起连线排查解决。经过一上午的努力，修改了几个问题，但是有两个问题没有查到原因和解决办法，于是决定下午去公司解决，还好下午狠顺利的将问题复现了，并找到了原因和解决">
+<meta name="keywords" content="Fragment">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FragmentManager is already executing transactions 异常分析">
+<meta property="og:url" content="https://codexiaomai.github.io/posts/7b4d3187.html">
+<meta property="og:site_name" content="CodeXiaoMai">
+<meta property="og:description" content="今天是 2019年09月13日，农历八月十五。没错今天是中秋节，而且对我来说，今年的中秋不一样🖕。 故事是这样的 —— 中秋前一天的晚上线上发现了问题，在家改bug到后半夜。中秋当天上午早上又接到线上的问题反馈，于是在家与其他几个小伙伴一起连线排查解决。经过一上午的努力，修改了几个问题，但是有两个问题没有查到原因和解决办法，于是决定下午去公司解决，还好下午狠顺利的将问题复现了，并找到了原因和解决">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-15T08:30:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FragmentManager is already executing transactions 异常分析">
+<meta name="twitter:description" content="今天是 2019年09月13日，农历八月十五。没错今天是中秋节，而且对我来说，今年的中秋不一样🖕。 故事是这样的 —— 中秋前一天的晚上线上发现了问题，在家改bug到后半夜。中秋当天上午早上又接到线上的问题反馈，于是在家与其他几个小伙伴一起连线排查解决。经过一上午的努力，修改了几个问题，但是有两个问题没有查到原因和解决办法，于是决定下午去公司解决，还好下午狠顺利的将问题复现了，并找到了原因和解决">
+  <link rel="canonical" href="https://codexiaomai.github.io/posts/7b4d3187">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>FragmentManager is already executing transactions 异常分析 | CodeXiaoMai</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container sidebar-position-left">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CodeXiaoMai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <h1 class="site-subtitle" itemprop="description">CodeXiaoMai的博客</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+    </div>
+</nav>
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content page-post-detail">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    <div class="reading-progress-bar"></div>
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://codexiaomai.github.io/posts/7b4d3187.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CodeXiaoMai">
+      <meta itemprop="description" content="CodeXiaoMai的博客">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CodeXiaoMai">
+    </span>
+      <header class="post-header">
+
+        
+          <h2 class="post-title" itemprop="name headline">FragmentManager is already executing transactions 异常分析
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-13 21:05:44" itemprop="dateCreated datePublished" datetime="2019-09-13T21:05:44+08:00">2019-09-13</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-15 16:30:30" itemprop="dateModified" datetime="2019-09-15T16:30:30+08:00">2019-09-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span id="/posts/7b4d3187.html" class="post-meta-item leancloud_visitors" data-flag-title="FragmentManager is already executing transactions 异常分析">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          <br>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span title="本文字数">17k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>今天是 2019年09月13日，农历八月十五。没错今天是中秋节，而且对我来说，今年的中秋不一样🖕。</p>
+<p>故事是这样的 ——</p>
+<p>中秋前一天的晚上线上发现了问题，在家改bug到后半夜。中秋当天上午早上又接到线上的问题反馈，于是在家与其他几个小伙伴一起连线排查解决。经过一上午的努力，修改了几个问题，但是有两个问题没有查到原因和解决办法，于是决定下午去公司解决，还好下午狠顺利的将问题复现了，并找到了原因和解决办法。当把问题都回归验证后，已经是快晚上7点钟了。回到家不到 8 点，吃了一大碗大家下午包的给我一个人留得饺子……</p>
+<p>扯蛋完毕，现在回到正题。</p>
+<a id="more"></a>
+
+<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>用户按返回键即将退出当前页面前，需要立即请求接口判断是否显示一个 Dialog，如果展示 Dialog 则不退出页面，否则再退出页面。</p>
+<h2 id="模拟代码"><a href="#模拟代码" class="headerlink" title="模拟代码"></a>模拟代码</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBackPressed</span><span class="params">()</span></span> &#123;</span><br><span class="line">        sendRequest().observe(<span class="keyword">this</span><span class="symbol">@MainActivity</span>, Observer &#123;</span><br><span class="line">            <span class="keyword">if</span> (it == <span class="literal">true</span>) &#123;</span><br><span class="line">                Toast.makeText(<span class="keyword">this</span><span class="symbol">@MainActivity</span>, <span class="string">"弹出Dialog"</span>, Toast.LENGTH_SHORT).show()</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">super</span>.onBackPressed()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">sendRequest</span><span class="params">()</span></span>: LiveData&lt;<span class="built_in">Boolean</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">val</span> result = MutableLiveData&lt;<span class="built_in">Boolean</span>&gt;()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里假设请求用时 500 ms。</span></span><br><span class="line">        Handler().postDelayed(&#123;</span><br><span class="line">            result.postValue(<span class="literal">false</span>)</span><br><span class="line">        &#125;, <span class="number">500L</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>正常情况下，一个请求几百毫秒内就可以完成，但是如果在弱网环境下，当用户点击返回键后，由于长时间没有反应，此时可能用户着急了，于是按下 Home 键，应用进入后台。一段时间后网络请求成功（返回结果为不显示 Dialog）或请求超时，用户再次返回应用时，此时发生如下异常：</p>
+<ul>
+<li>Android 8.0（不包含8.0） 以下 ANR。</li>
+<li>Android 8.0+ 报以下错误，</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2019</span>-<span class="number">09</span>-<span class="number">13</span> <span class="number">21</span>:<span class="number">39</span>:<span class="number">05.780</span> <span class="number">2106</span>-<span class="number">2106</span>/com.xiaomai E/AndroidRuntime: FATAL EXCEPTION: main</span><br><span class="line">    Process: com.xiaomai, PID: <span class="number">2106</span></span><br><span class="line">    java.lang.RuntimeException: Unable to resume activity &#123;com.xiaomai/com.xiaomai.MainActivity&#125;: java.lang.IllegalStateException: FragmentManager is already executing transactions</span><br><span class="line">        at android.app.ActivityThread.performResumeActivity(ActivityThread.java:<span class="number">3645</span>)</span><br><span class="line">        at android.app.ActivityThread.handleResumeActivity(ActivityThread.java:<span class="number">3685</span>)</span><br><span class="line">        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:<span class="number">1643</span>)</span><br><span class="line">        at android.os.Handler.dispatchMessage(Handler.java:<span class="number">105</span>)</span><br><span class="line">        at android.os.Looper.loop(Looper.java:<span class="number">164</span>)</span><br><span class="line">        at android.app.ActivityThread.main(ActivityThread.java:<span class="number">6541</span>)</span><br><span class="line">        at java.lang.reflect.Method.invoke(Native Method)</span><br><span class="line">        at com.android.internal.os.Zygote$MethodAndArgsCaller.run(Zygote.java:<span class="number">240</span>)</span><br><span class="line">        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:<span class="number">767</span>)</span><br><span class="line">     Caused by: java.lang.IllegalStateException: FragmentManager is already executing transactions</span><br><span class="line">        at android.app.FragmentManagerImpl.ensureExecReady(FragmentManager.java:<span class="number">1987</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.execPendingActions(FragmentManager.java:<span class="number">2043</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.popBackStackImmediate(FragmentManager.java:<span class="number">850</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.popBackStackImmediate(FragmentManager.java:<span class="number">811</span>)</span><br><span class="line">        at android.app.Activity.onBackPressed(Activity.java:<span class="number">2993</span>)</span><br><span class="line">        at androidx.fragment.app.FragmentActivity.onBackPressed(FragmentActivity.java:<span class="number">191</span>)</span><br><span class="line">        at com.xiaomai.MainActivity.access$onBackPressed$s1136912392(MainActivity.kt:<span class="number">14</span>)</span><br><span class="line">        at com.xiaomai.MainActivity$onBackPressed$<span class="number">1</span>.onChanged(MainActivity.kt:<span class="number">28</span>)</span><br><span class="line">        at com.xiaomai.MainActivity$onBackPressed$<span class="number">1</span>.onChanged(MainActivity.kt:<span class="number">14</span>)</span><br><span class="line">        at androidx.lifecycle.LiveData.considerNotify(LiveData.java:<span class="number">131</span>)</span><br><span class="line">        at androidx.lifecycle.LiveData.dispatchingValue(LiveData.java:<span class="number">144</span>)</span><br><span class="line">        at androidx.lifecycle.LiveData$ObserverWrapper.activeStateChanged(LiveData.java:<span class="number">442</span>)</span><br><span class="line">        at androidx.lifecycle.LiveData$LifecycleBoundObserver.onStateChanged(LiveData.java:<span class="number">394</span>)</span><br><span class="line">        at androidx.lifecycle.LifecycleRegistry$ObserverWithState.dispatchEvent(LifecycleRegistry.java:<span class="number">361</span>)</span><br><span class="line">        at androidx.lifecycle.LifecycleRegistry.forwardPass(LifecycleRegistry.java:<span class="number">300</span>)</span><br><span class="line">        at androidx.lifecycle.LifecycleRegistry.sync(LifecycleRegistry.java:<span class="number">339</span>)</span><br><span class="line">        at androidx.lifecycle.LifecycleRegistry.moveToState(LifecycleRegistry.java:<span class="number">145</span>)</span><br><span class="line">        at androidx.lifecycle.LifecycleRegistry.handleLifecycleEvent(LifecycleRegistry.java:<span class="number">131</span>)</span><br><span class="line">        at androidx.lifecycle.ReportFragment.dispatch(ReportFragment.java:<span class="number">123</span>)</span><br><span class="line">        at androidx.lifecycle.ReportFragment.onStart(ReportFragment.java:<span class="number">83</span>)</span><br><span class="line">        at android.app.Fragment.performStart(Fragment.java:<span class="number">2637</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:<span class="number">1312</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.moveFragmentToExpectedState(FragmentManager.java:<span class="number">1549</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:<span class="number">1611</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.dispatchMoveToState(FragmentManager.java:<span class="number">3039</span>)</span><br><span class="line">        at android.app.FragmentManagerImpl.dispatchStart(FragmentManager.java:<span class="number">2996</span>)</span><br><span class="line">        at android.app.FragmentController.dispatchStart(FragmentController.java:<span class="number">189</span>)</span><br><span class="line">        at android.app.Activity.performStart(Activity.java:<span class="number">6998</span>)</span><br><span class="line">        at android.app.Activity.performRestart(Activity.java:<span class="number">7066</span>)</span><br><span class="line">        at android.app.Activity.performResume(Activity.java:<span class="number">7071</span>)</span><br><span class="line">        at android.app.ActivityThread.performResumeActivity(ActivityThread.java:<span class="number">3620</span>)</span><br><span class="line">        at android.app.ActivityThread.handleResumeActivity(ActivityThread.java:<span class="number">3685</span>) </span><br><span class="line">        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:<span class="number">1643</span>) </span><br><span class="line">        at android.os.Handler.dispatchMessage(Handler.java:<span class="number">105</span>) </span><br><span class="line">        at android.os.Looper.loop(Looper.java:<span class="number">164</span>) </span><br><span class="line">        at android.app.ActivityThread.main(ActivityThread.java:<span class="number">6541</span>) </span><br><span class="line">        at java.lang.reflect.Method.invoke(Native Method) </span><br><span class="line">        at com.android.internal.os.Zygote$MethodAndArgsCaller.run(Zygote.java:<span class="number">240</span>) </span><br><span class="line">        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:<span class="number">767</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="问题重现"><a href="#问题重现" class="headerlink" title="问题重现"></a>问题重现</h2><p>为了模拟弱网环境，方便问题重现，这里把请求时间改为 3s。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Handler().postDelayed(&#123;</span><br><span class="line">    result.postValue(<span class="literal">false</span>)</span><br><span class="line">&#125;, <span class="number">3000L</span>)</span><br></pre></td></tr></table></figure>
+
+<p>当按下返回键后，立即按 Home 键，等待 3 秒后再次回到应用，问题重现。</p>
+<h2 id="原因排查"><a href="#原因排查" class="headerlink" title="原因排查"></a>原因排查</h2><p>从堆栈的异常日志可以看到：异常发生的原因与 Fragment 有关，并且对 Fragment 进行了不正当的操作。</p>
+<p>看一下代码中哪个地方用到了 Fragment 呢？仔细一行行的看过代码后，发现没有地方使用 Fragment！！！ WHAT?????</p>
+<p>这是为什么呢？代码中没有任何地方使用 Fragment，错误堆栈中却报了与 Fragment 有关的信息，再仔细看一下堆栈的异常日志，发现有一个叫 <code>ReportFragment</code> 的类。</p>
+<p>原来，ReportFragment 是 Android 为了实现 Lifecycles 相关功能而自动添加的。</p>
+<p>接下来，调试一下当应用从后台返回时都发生了什么？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">handleResumeActivity:3685, ActivityThread (android.app)</span><br><span class="line">performResumeActivity:3620, ActivityThread (android.app)</span><br><span class="line">performResume:7071, Activity (android.app)</span><br><span class="line">performRestart:7066, Activity (android.app)</span><br><span class="line">performStart:6991, Activity (android.app)</span><br><span class="line">execPendingActions:402, FragmentController (android.app)</span><br><span class="line">execPendingActions:2043, FragmentManagerImpl (android.app) =&gt; 代码分析一</span><br></pre></td></tr></table></figure>
+
+<p>代码分析一（此时的 FragmentManager 为 Activity 中的 FragmentManager）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">execPendingActions</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ensureExecReady(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> didSomething = <span class="keyword">false</span>;</span><br><span class="line">    ...省略部分代码</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> didSomething;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析二（此时 FragmentManager 仍为 Activity 中的）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExecReady</span><span class="params">(<span class="keyword">boolean</span> allowStateLoss)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mExecutingActions) &#123;</span><br><span class="line">        <span class="comment">// 这正是堆栈日志中抛出的异常信息</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"FragmentManager is already executing transactions"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Looper.myLooper() != mHost.getHandler().getLooper()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Must be called from main thread of fragment host"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ... 省略部分代码</span><br><span class="line">    mExecutingActions = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        executePostponedTransaction(<span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        mExecutingActions = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然这里找到了异常信息，但是这时并没有抛出异常。</p>
+<p>接下来的运行如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dispatchStart:189, FragmentController (android.app)</span><br><span class="line">dispatchStart:2996, FragmentManagerImpl (android.app)</span><br><span class="line">dispatchMoveToState:3039, FragmentManagerImpl (android.app) =&gt; 代码分析三</span><br></pre></td></tr></table></figure>
+
+<p>代码分析三（此时 FragmentManager 仍为 Activity 中的）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchMoveToState</span><span class="params">(<span class="keyword">int</span> state)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mAllowOldReentrantBehavior) &#123;</span><br><span class="line">        moveToState(state, <span class="keyword">false</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mExecutingActions = <span class="keyword">true</span>;</span><br><span class="line">            <span class="comment">// 见代码分析四</span></span><br><span class="line">            moveToState(state, <span class="keyword">false</span>);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            mExecutingActions = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    execPendingActions();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><font color="red">这里要注意的是 mExecutingActions = true;然后就进入了 moveToState 方法</font>。</p>
+<p>代码分析四（此时 FragmentManager 仍为 Activity 中的）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">moveToState</span><span class="params">(<span class="keyword">int</span> newState, <span class="keyword">boolean</span> always)</span> </span>&#123;</span><br><span class="line">    ... 省略部分代码</span><br><span class="line">    <span class="comment">// Now iterate through all active fragments. These will include those that are removed</span></span><br><span class="line">    <span class="comment">// and detached.</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> numActive = mActive.size();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numActive; i++) &#123;</span><br><span class="line">        <span class="comment">// 此时 mActivie 中只有一个且为 ReportFragment</span></span><br><span class="line">        Fragment f = mActive.valueAt(i);</span><br><span class="line">        <span class="keyword">if</span> (f != <span class="keyword">null</span> &amp;&amp; (f.mRemoving || f.mDetached) &amp;&amp; !f.mIsNewlyAdded) &#123;</span><br><span class="line">            <span class="comment">// 见代码分析五</span></span><br><span class="line">            moveFragmentToExpectedState(f);</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ... 省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析五（此时 FragmentManager 为 Activity 中的）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">moveFragmentToExpectedState</span><span class="params">(<span class="keyword">final</span> Fragment f)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    moveToState(f, nextState, f.getNextTransition(), f.getNextTransitionStyle(), <span class="keyword">false</span>);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"ReferenceEquality"</span>)</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">moveToState</span><span class="params">(Fragment f, <span class="keyword">int</span> newState, <span class="keyword">int</span> transit, <span class="keyword">int</span> transitionStyle, <span class="keyword">boolean</span> keepActive)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">switch</span> (f.mState) &#123;</span><br><span class="line">        <span class="keyword">case</span> Fragment.STOPPED:</span><br><span class="line">            <span class="keyword">if</span> (newState &gt; Fragment.STOPPED) &#123;</span><br><span class="line">                <span class="comment">// 见代码分析六</span></span><br><span class="line">                f.performStart();</span><br><span class="line">                dispatchOnFragmentStarted(f, <span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析六（此时进入 Fragment）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">performStart</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mChildFragmentManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mChildFragmentManager.noteStateNotSaved();</span><br><span class="line">            <span class="comment">// 再次回到代码分析一</span></span><br><span class="line">            mChildFragmentManager.execPendingActions();</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><font color="red">虽然这里再次进入代码分析一，但这时的 FragmentManager 与前面的 FragmentManager 已经不是同一个了，之前是 Activity 中的而现在是 ReportFragment 中的 childFragmentManager，并且 Activity 的栈帧仍然处在代码分析三的 mo veToState() 方法中，mExecutingActions 仍然为 true。</font></p>
+<p>代码分析一（此时的 FragmentManager 为 ReportFragment 中的 childFragmentManager）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">execPendingActions</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ensureExecReady(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> didSomething = <span class="keyword">false</span>;</span><br><span class="line">    ...省略部分代码</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> didSomething;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析二（此时的 FragmentManager 为 ReportFragment 中的 childFragmentManager）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExecReady</span><span class="params">(<span class="keyword">boolean</span> allowStateLoss)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mExecutingActions) &#123;</span><br><span class="line">        <span class="comment">// 这正是堆栈日志中抛出的异常信息</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"FragmentManager is already executing transactions"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Looper.myLooper() != mHost.getHandler().getLooper()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Must be called from main thread of fragment host"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ... 省略部分代码</span><br><span class="line">    mExecutingActions = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        executePostponedTransaction(<span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        mExecutingActions = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时仍然没有抛出异常。</p>
+<p>接下来的运行仍然如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dispatchStart:189, FragmentController (android.app)</span><br><span class="line">dispatchStart:2996, FragmentManagerImpl (android.app)</span><br><span class="line">dispatchMoveToState:3039, FragmentManagerImpl (android.app) =&gt; 代码分析三</span><br></pre></td></tr></table></figure>
+
+<p>代码分析三（此时的 FragmentManager 为 ReportFragment 中的 childFragmentManager）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchMoveToState</span><span class="params">(<span class="keyword">int</span> state)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mAllowOldReentrantBehavior) &#123;</span><br><span class="line">        moveToState(state, <span class="keyword">false</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mExecutingActions = <span class="keyword">true</span>;</span><br><span class="line">            <span class="comment">// 见代码分析四</span></span><br><span class="line">            moveToState(state, <span class="keyword">false</span>);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            mExecutingActions = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    execPendingActions();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><font color="red">这里仍然要注意的是 mExecutingActions = true;然后就进入了 moveToState 方法</font>。</p>
+<p>代码分析四（此时的 FragmentManager 为 ReportFragment 中的 childFragmentManager）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">moveToState</span><span class="params">(<span class="keyword">int</span> newState, <span class="keyword">boolean</span> always)</span> </span>&#123;</span><br><span class="line">    ... 省略部分代码</span><br><span class="line">    <span class="comment">// Now iterate through all active fragments. These will include those that are removed</span></span><br><span class="line">    <span class="comment">// and detached.</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> numActive = mActive.size();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这时 numActive = 0，所以不会进入 for 循环。</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numActive; i++) &#123;</span><br><span class="line">        Fragment f = mActive.valueAt(i);</span><br><span class="line">        <span class="keyword">if</span> (f != <span class="keyword">null</span> &amp;&amp; (f.mRemoving || f.mDetached) &amp;&amp; !f.mIsNewlyAdded) &#123;</span><br><span class="line">            moveFragmentToExpectedState(f);</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ... 省略部分代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为这里不会进入 for 循环，所以方法运行结束后，会进入代码分析三中 finally 代码块中，将 mExecutingActions 赋值为 false;这时方法执行完毕，回到代码分析六，继续向下执行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">performStart</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mChildFragmentManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mChildFragmentManager.noteStateNotSaved();</span><br><span class="line">            mChildFragmentManager.execPendingActions(); <span class="comment">// 执行完毕</span></span><br><span class="line">        &#125;</span><br><span class="line">        mState = STARTED;</span><br><span class="line">        mCalled = <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">// 见代码分析七</span></span><br><span class="line">        onStart();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析七：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReportFragment</span> <span class="keyword">extends</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onStart();</span><br><span class="line">        dispatchStart(mProcessListener);</span><br><span class="line">        dispatch(Lifecycle.Event.ON_START);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 ReportFragment 的 onStart() 方法，会对 OnStart 事件进行分发，之后 LiveData 在 MainActivity 中等到响应：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBackPressed</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sendRequest().observe(<span class="keyword">this</span><span class="symbol">@MainActivity</span>, Observer &#123;</span><br><span class="line">        <span class="keyword">if</span> (it == <span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 因为返回的结果是 true，所以执行此方法。见代码分析八</span></span><br><span class="line">            <span class="keyword">super</span>.onBackPressed()</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Toast.makeText(<span class="keyword">this</span><span class="symbol">@MainActivity</span>, <span class="string">"弹出Dialog"</span>, Toast.LENGTH_SHORT).show()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析八：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FragmentActivity</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBackPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 这时的 fragmentManger 又是一个新的 FragmentManger，它属于 FragmentActivity。</span></span><br><span class="line">        FragmentManager fragmentManager = mFragments.getSupportFragmentManager();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> isStateSaved = fragmentManager.isStateSaved();</span><br><span class="line">        <span class="keyword">if</span> (isStateSaved &amp;&amp; Build.VERSION.SDK_INT &lt;= Build.VERSION_CODES.N_MR1) &#123;</span><br><span class="line">            <span class="comment">// Older versions will throw an exception from the framework</span></span><br><span class="line">            <span class="comment">// FragmentManager.popBackStackImmediate(), so we'll just</span></span><br><span class="line">            <span class="comment">// return here. The Activity is likely already on its way out</span></span><br><span class="line">            <span class="comment">// since the fragmentManager has already been saved.</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (isStateSaved || !fragmentManager.popBackStackImmediate()) &#123;</span><br><span class="line">            <span class="comment">// 代码分析九</span></span><br><span class="line">            <span class="keyword">super</span>.onBackPressed();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析九：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBackPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mActionBar != <span class="keyword">null</span> &amp;&amp; mActionBar.collapseActionView()) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这个 fragmentManager 又变成了 Activity 中的 FragmentManager。</span></span><br><span class="line">        FragmentManager fragmentManager = mFragments.getFragmentManager();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 见代码分析十</span></span><br><span class="line">        <span class="keyword">if</span> (fragmentManager.isStateSaved() || !fragmentManager.popBackStackImmediate()) &#123;</span><br><span class="line">            finishAfterTransition();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码分析十（此时的 FragmentManager 为 Activity 中的 FragmentManager）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">popBackStackImmediate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    checkStateLoss();</span><br><span class="line">    <span class="keyword">return</span> popBackStackImmediate(<span class="keyword">null</span>, -<span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">popBackStackImmediate</span><span class="params">(String name, <span class="keyword">int</span> id, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 再次进入代码分析一，此时的 fragmentManager 与第一次分析中的是同一个</span></span><br><span class="line">    execPendingActions();</span><br><span class="line">    ensureExecReady(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    ... 省略部分代码</span><br><span class="line">    <span class="keyword">return</span> executePop;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们再次进入到代码分析二中:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExecReady</span><span class="params">(<span class="keyword">boolean</span> allowStateLoss)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mExecutingActions) &#123;</span><br><span class="line">        <span class="comment">// 这正是堆栈日志中抛出的异常信息</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"FragmentManager is already executing transactions"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为前面在代码分析三中我们强调过，Activity 中的 mExecutingActions 为 true 后，就再也没有被修改为 false，所以这里抛出了异常。</p>
+<p>至此，问题的原因已经找到了，是由于 Activity 中的 FragmentManager 的第一次任务还没有执行完毕，其他的操作又导致它需要进行第二次任务，所以发生错误。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>问题的原因已经找到了，所以当第一次任务没有执行结束时，如果有第二个任务到来，我们可以从两个方面去解决问题：</p>
+<h3 id="直接丢弃第二个任务"><a href="#直接丢弃第二个任务" class="headerlink" title="直接丢弃第二个任务"></a>直接丢弃第二个任务</h3><p>在页面不可见时，取消对 LiveData 的监听，这样页面重新可见时，就不会接收到变化的通知了，修改代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">class MainActivity : AppCompatActivity() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> val observer = Observer&lt;Boolean&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (it == <span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">super</span>.onBackPressed()</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Toast.makeText(<span class="keyword">this</span><span class="meta">@MainActivity</span>, <span class="string">"弹出Dialog"</span>, Toast.LENGTH_SHORT).show()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> result: LiveData&lt;Boolean&gt;? = <span class="keyword">null</span></span><br><span class="line"></span><br><span class="line">    <span class="function">override fun <span class="title">onBackPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        result = sendRequest()</span><br><span class="line">        result?.observe(<span class="keyword">this</span><span class="meta">@MainActivity</span>, observer)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">override fun <span class="title">onStop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onStop()</span><br><span class="line">        result?.removeObserver(observer)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> fun <span class="title">sendRequest</span><span class="params">()</span>: LiveData&lt;Boolean&gt; </span>&#123;</span><br><span class="line">        val result = MutableLiveData&lt;Boolean&gt;()</span><br><span class="line"></span><br><span class="line">        Handler().postDelayed(&#123;</span><br><span class="line">            result.postValue(<span class="keyword">true</span>)</span><br><span class="line">        &#125;, <span class="number">3000L</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="等待第一个任务执行完毕后再执行第二个任务"><a href="#等待第一个任务执行完毕后再执行第二个任务" class="headerlink" title="等待第一个任务执行完毕后再执行第二个任务"></a>等待第一个任务执行完毕后再执行第二个任务</h3><p>通过 Handler.post() 方式，将任务滞后完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">class MainActivity : AppCompatActivity() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">override fun <span class="title">onBackPressed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        sendRequest().observe(<span class="keyword">this</span><span class="meta">@MainActivity</span>, Observer &#123;</span><br><span class="line">            <span class="keyword">if</span> (it == <span class="keyword">true</span>) &#123;</span><br><span class="line">                Handler().post &#123;</span><br><span class="line">                    <span class="keyword">super</span>.onBackPressed()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Toast.makeText(<span class="keyword">this</span><span class="meta">@MainActivity</span>, <span class="string">"弹出Dialog"</span>, Toast.LENGTH_SHORT).show()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> fun <span class="title">sendRequest</span><span class="params">()</span>: LiveData&lt;Boolean&gt; </span>&#123;</span><br><span class="line">        val result = MutableLiveData&lt;Boolean&gt;()</span><br><span class="line"></span><br><span class="line">        Handler().postDelayed(&#123;</span><br><span class="line">            result.postValue(<span class="keyword">true</span>)</span><br><span class="line">        &#125;, <span class="number">3000L</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+        
+        <div class="post-tags">
+            <a href="/tags/Fragment/" rel="tag"># Fragment</a>
+          
+        </div>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+              <a href="/posts/df0aa059.html" rel="next" title="刘海屏适配">
+                <i class="fa fa-chevron-left"></i> 刘海屏适配
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+          </div>
+        </div>
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="gitalk-container"></div>
+  
+
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="CodeXiaoMai">
+  <p class="site-author-name" itemprop="name">CodeXiaoMai</p>
+  <div class="site-description motion-element" itemprop="description">CodeXiaoMai的博客</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/codexiaomai" title="GitHub &rarr; https://github.com/codexiaomai" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:codexiaomai@foxmail.com" title="E-Mail &rarr; mailto:codexiaomai@foxmail.com" rel="external nofollow noopener noreferrer" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+  </div>
+
+
+
+        </div>
+      </div>
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#需求"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模拟代码"><span class="nav-number">2.</span> <span class="nav-text">模拟代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题"><span class="nav-number">3.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题重现"><span class="nav-number">4.</span> <span class="nav-text">问题重现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原因排查"><span class="nav-number">5.</span> <span class="nav-text">原因排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">6.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#直接丢弃第二个任务"><span class="nav-number">6.1.</span> <span class="nav-text">直接丢弃第二个任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#等待第一个任务执行完毕后再执行第二个任务"><span class="nav-number">6.2.</span> <span class="nav-text">等待第一个任务执行完毕后再执行第二个任务</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CodeXiaoMai</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+      </div>
+
+    
+
+  </div>
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+  <script src="/lib/reading_progress/reading_progress.js"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/js/utils.js?v=7.3.0"></script>
+  <script src="/js/motion.js?v=7.3.0"></script>
+
+
+  <script src="/js/affix.js?v=7.3.0"></script>
+  <script src="/js/schemes/pisces.js?v=7.3.0"></script>
+
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  <script>
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var entries = [];
+      var $visitors = $('.leancloud_visitors');
+
+      $visitors.each(function() {
+        entries.push( $(this).attr('id').trim() );
+      });
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url: { '$in': entries } }) })
+        .done(function({ results }) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if (countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+  }
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'GJy8DOn0XawyF4vcnx9MfnaM-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: `https://${api_server}/1.1${url}`,
+              headers: {
+                'X-LC-Id': 'GJy8DOn0XawyF4vcnx9MfnaM-gzGzoHsz',
+                'X-LC-Key': '5oGBzj80wrkx5F6NsFBF3vm7',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          if (CONFIG.page.isPost) {
+            const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+            if (localhost.test(document.URL)) return;
+            addCount(Counter);
+          } else {
+            if ($('.post-title-link').length >= 1) {
+              showTime(Counter);
+            }
+          }
+        });
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+  
+  <script src="/js/scrollspy.js?v=7.3.0"></script>
+<script src="/js/post-details.js?v=7.3.0"></script>
+
+
+    
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+<script src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+
+<script>
+  var gitalk = new Gitalk({
+    clientID: 'b7a4f14b3ce2255c6f6c',
+    clientSecret: '6459b8daea37c31c03f4e9fb46dcbcfd2bbbb801',
+    repo: 'codexiaomai.github.io',
+    owner: 'codexiaomai',
+    admin: ['codexiaomai'],
+    id: md5(location.pathname),
+      language: window.navigator.language || window.navigator.userLanguage,
+    
+    distractionFreeMode: 'true'
+  });
+  gitalk.render('gitalk-container');
+</script>
+
+
+  
+  <link rel="stylesheet" href="/dist/APlayer.min.css">
+  <div id="aplayer"></div>
+  <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+  <script type="text/javascript" src="/dist/music.js"></script>
+
+  
+  <script type="text/javascript" src="/js/hexo_resize_image.js"></script>
+</body>
+</html>
