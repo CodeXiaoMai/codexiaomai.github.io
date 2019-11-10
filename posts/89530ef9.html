@@ -56,19 +56,19 @@
   };
 </script>
 
-  <meta name="description" content="因为计算机只能处理数字，如果要处理文本，就必须先把文本转换为数字才能处理。最早的计算机在设计时采用8个比特（bit）作为一个字节（byte），所以，一个字节能表示的最大的整数就是255（二进制 11111111 = 十进制255），如果要表示更大的整数，就必须用更多的字节。比如两个字节可以表示的最大整数是65535，4个字节可以表示的最大整数是4294967295。">
-<meta name="keywords" content="字符编码">
+  <meta name="description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。">
+<meta name="keywords" content="Java,集合,多线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="字符编码的历史演变">
-<meta property="og:url" content="https://codexiaomai.github.io/posts/a082b9c.html">
+<meta property="og:title" content="Java 线程安全的集合——List">
+<meta property="og:url" content="https://codexiaomai.github.io/posts/89530ef9.html">
 <meta property="og:site_name" content="CodeXiaoMai">
-<meta property="og:description" content="因为计算机只能处理数字，如果要处理文本，就必须先把文本转换为数字才能处理。最早的计算机在设计时采用8个比特（bit）作为一个字节（byte），所以，一个字节能表示的最大的整数就是255（二进制 11111111 = 十进制255），如果要表示更大的整数，就必须用更多的字节。比如两个字节可以表示的最大整数是65535，4个字节可以表示的最大整数是4294967295。">
+<meta property="og:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-05T12:58:28.000Z">
+<meta property="og:updated_time" content="2019-11-10T08:21:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="字符编码的历史演变">
-<meta name="twitter:description" content="因为计算机只能处理数字，如果要处理文本，就必须先把文本转换为数字才能处理。最早的计算机在设计时采用8个比特（bit）作为一个字节（byte），所以，一个字节能表示的最大的整数就是255（二进制 11111111 = 十进制255），如果要表示更大的整数，就必须用更多的字节。比如两个字节可以表示的最大整数是65535，4个字节可以表示的最大整数是4294967295。">
-  <link rel="canonical" href="https://codexiaomai.github.io/posts/a082b9c">
+<meta name="twitter:title" content="Java 线程安全的集合——List">
+<meta name="twitter:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。">
+  <link rel="canonical" href="https://codexiaomai.github.io/posts/89530ef9">
 
 
 <script id="page-configurations">
@@ -82,7 +82,7 @@
   };
 </script>
 
-  <title>字符编码的历史演变 | CodeXiaoMai</title>
+  <title>Java 线程安全的集合——List | CodeXiaoMai</title>
   
 
 
@@ -258,7 +258,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://codexiaomai.github.io/posts/a082b9c.html">
+    <link itemprop="mainEntityOfPage" href="https://codexiaomai.github.io/posts/89530ef9.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="CodeXiaoMai">
@@ -272,7 +272,7 @@
       <header class="post-header">
 
         
-          <h2 class="post-title" itemprop="name headline">字符编码的历史演变
+          <h2 class="post-title" itemprop="name headline">Java 线程安全的集合——List
 
               
             
@@ -293,21 +293,11 @@
                 
               
 
-              <time title="创建时间：2019-08-04 19:43:32" itemprop="dateCreated datePublished" datetime="2019-08-04T19:43:32+08:00">2019-08-04</time>
+              <time title="创建时间：2019-11-10 16:19:40 / 修改时间：16:21:32" itemprop="dateCreated datePublished" datetime="2019-11-10T16:19:40+08:00">2019-11-10</time>
             </span>
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-05 20:58:28" itemprop="dateModified" datetime="2019-08-05T20:58:28+08:00">2019-08-05</time>
-              </span>
             
           
             <span class="post-meta-item">
@@ -318,7 +308,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/基础知识/" itemprop="url" rel="index"><span itemprop="name">基础知识</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span>
 
                 
                 
@@ -327,7 +317,7 @@
           
 
           
-            <span id="/posts/a082b9c.html" class="post-meta-item leancloud_visitors" data-flag-title="字符编码的历史演变">
+            <span id="/posts/89530ef9.html" class="post-meta-item leancloud_visitors" data-flag-title="Java 线程安全的集合——List">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -344,7 +334,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">1.6k</span>
+              <span title="本文字数">4.6k</span>
             </span>
           
 
@@ -357,45 +347,40 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>因为计算机只能处理数字，如果要处理文本，就必须先把文本转换为数字才能处理。最早的计算机在设计时采用8个比特（bit）作为一个字节（byte），所以，一个字节能表示的最大的整数就是255（二进制 11111111 = 十进制255），如果要表示更大的整数，就必须用更多的字节。比如两个字节可以表示的最大整数是65535，4个字节可以表示的最大整数是4294967295。</p>
+        <p>在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。</p>
 <a id="more"></a>
 
-<h2 id="ASCII-编码的诞生"><a href="#ASCII-编码的诞生" class="headerlink" title="ASCII 编码的诞生"></a>ASCII 编码的诞生</h2><p>由于计算机是美国人发明的，因此，最早只有127个字符被编码到计算机里，也就是大小写英文字母、数字和一些符号，这个编码表被称为 ASCII 编码，比如大写字母 A 的编码是65，小写字母 z 的编码是122。</p>
-<p>但是要处理中文，显然一个字节是不够的，至少需要两个字节，而且还不能和ASCII编码冲突，所以，中国制定了 GB2312 编码，用来把中文编进去。</p>
-<h2 id="八仙过海，各显神通"><a href="#八仙过海，各显神通" class="headerlink" title="八仙过海，各显神通"></a>八仙过海，各显神通</h2><p>但全世界有上百种语言，日本把日文编到 Shift_JIS 里，韩国把韩文编到Euc-kr 里，各国有各国的标准，就会不可避免地出现冲突，结果就是，在多语言混合的文本中，显示出来会有乱码。</p>
-<h2 id="Unicode-为统一而生"><a href="#Unicode-为统一而生" class="headerlink" title="Unicode 为统一而生"></a>Unicode 为统一而生</h2><p>为了避免各国之间的编码冲突，Unicode应运而生。Unicode把所有语言都统一到一套编码里，这样就不会再有乱码问题了。</p>
-<p>Unicode标准也在不断发展，但最常用的是用两个字节表示一个字符（如果要用到非常偏僻的字符，就需要4个字节）。现代操作系统和大多数编程语言都直接支持Unicode。</p>
-<p>新的问题又出现了：如果统一成Unicode编码，乱码问题从此消失了。但是，如果你写的文本基本上全部是英文的话，用Unicode编码比ASCII编码需要多一倍的存储空间，在存储和传输上就十分不划算。</p>
-<h2 id="UTF-8-来优化-Unicode"><a href="#UTF-8-来优化-Unicode" class="headerlink" title="UTF-8 来优化 Unicode"></a>UTF-8 来优化 Unicode</h2><p>本着节约的精神，又出现了把Unicode编码转化为“可变长编码”的UTF-8编码。UTF-8编码把一个Unicode字符根据不同的数字大小编码成1-6个字节，常用的英文字母被编码成1个字节，汉字通常是3个字节，只有很生僻的字符才会被编码成4-6个字节。如果你要传输的文本包含大量英文字符，用UTF-8编码就能节省空间：</p>
-<table>
-<thead>
-<tr>
-<th align="center">字符</th>
-<th align="center">ASCII</th>
-<th align="center">Unicode</th>
-<th align="center">UTF-8</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">A</td>
-<td align="center">01000001</td>
-<td align="center">00000000 01000001</td>
-<td align="center">01000001</td>
-</tr>
-<tr>
-<td align="center">中</td>
-<td align="center">x</td>
-<td align="center">01001110 00101101</td>
-<td align="center">11100100 10111000 10101101</td>
-</tr>
-</tbody></table>
-<p>从上面的表格还可以发现，UTF-8编码有一个额外的好处，就是ASCII编码实际上可以被看成是UTF-8编码的一部分。</p>
-<p>如果把ASCII编码的A用Unicode编码，只需要在前面补0就可以，因此，A的Unicode编码是00000000 01000001。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>搞清楚了ASCII、Unicode和UTF-8的关系，我们就可以总结一下现在计算机系统通用的字符编码工作方式：</p>
-<p>在计算机内存中，统一使用Unicode编码，当需要保存到硬盘或者需要传输的时候，就转换为UTF-8编码。</p>
-<p>用记事本编辑的时候，从文件读取的UTF-8字符被转换为Unicode字符到内存里，编辑完成后，保存的时候再把Unicode转换为UTF-8保存到文件。</p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431664106267f12e9bef7ee14cf6a8776a479bdec9b9000" rel="external nofollow noopener noreferrer" target="_blank">https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431664106267f12e9bef7ee14cf6a8776a479bdec9b9000</a></p>
-<h2 id="开源工具推广"><a href="#开源工具推广" class="headerlink" title="开源工具推广"></a>开源工具推广</h2><p>你还在为开发中频繁切换环境打包而烦恼吗？快来试试 Environment Switcher 吧！使用它可以在app运行时一键切换环境，而且还支持其他贴心小功能，有了它妈妈再也不用担心频繁环境切换了。<a href="https://github.com/CodeXiaoMai/EnvironmentSwitcher" rel="external nofollow noopener noreferrer" target="_blank">https://github.com/CodeXiaoMai/EnvironmentSwitcher</a></p>
+<h2 id="1-使用-Collections-synchronizedList-List-list"><a href="#1-使用-Collections-synchronizedList-List-list" class="headerlink" title="1. 使用 Collections.synchronizedList(List list)"></a>1. 使用 Collections.synchronizedList(List list)</h2><p>因为 ArrayList 本身不是线程安全的，通过 <code>Collections.synchronizedList(List&lt;T&gt; list)</code> 可以将其包装成一个线程安全的 List。</p>
+<p>这个方法根据传入的 List 返回一个支持同步（线程安全）的 List。接下来就可以利用这个返回的 List 进行串行访问了。</p>
+<p>但是，需要注意的是：当遍历返回列表时，必须手动对其进行同步，方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">List list = Collections.synchronizedList(<span class="keyword">new</span> ArrayList());</span><br><span class="line">      ...</span><br><span class="line"><span class="keyword">synchronized</span> (list) &#123;</span><br><span class="line">    Iterator i = list.iterator(); <span class="comment">// 必须在同步代码块里</span></span><br><span class="line">    <span class="keyword">while</span> (i.hasNext())</span><br><span class="line">        foo(i.next());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果不遵循该建议可能导致不确定的行为。如果传入的 List 是可序列化的，则返回的 List 也是可序列化的。</p>
+<h2 id="2-Vector"><a href="#2-Vector" class="headerlink" title="2. Vector"></a>2. Vector</h2><p>Vector 和 List 大同小异，底层都是用数组实现，只是在它的大部分方法上添加了 <code>synchronized</code> 关键字，用来保证线程安全；另外，ArrayList 在扩容时是在原来的基础上扩展 0.5 倍，而 Vector 是扩展 1 倍；此外 Vector 除了 iterator() 和 listIterator() （两个都支持 fast-fail 机制）比 ArrayList 多一个不支持 fast-fail 机制的迭代器：elements()，只有 hasMoreElements() 和 nextElement() 方法。</p>
+<blockquote>
+<p>和 ArrayList 和 Vector 一样，同样的类似关系的类还有 HashMap 和 HashTable，StringBuilder 和 StringBuffer，后者是前者线程安全版本的实现，只是加了个 Synchronized 关键字。</p>
+</blockquote>
+<p>Vector 和 Collections.synchronizedList(List list) 有什么区别？</p>
+<p>Collections.synchronizedList(List list) 源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">synchronizedList</span><span class="params">(List&lt;T&gt; list)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (list <span class="keyword">instanceof</span> RandomAccess ? <span class="keyword">new</span> SynchronizedRandomAccessList&lt;&gt;(list) : <span class="keyword">new</span> SynchronizedList&lt;&gt;(list));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">synchronizedList</span><span class="params">(List&lt;T&gt; list, Object mutex)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (list <span class="keyword">instanceof</span> RandomAccess ?</span><br><span class="line">            <span class="keyword">new</span> SynchronizedRandomAccessList&lt;&gt;(list, mutex) :</span><br><span class="line">            <span class="keyword">new</span> SynchronizedList&lt;&gt;(list, mutex));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedList</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">SynchronizedCollection</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> List&lt;E&gt; list;</span><br><span class="line"></span><br><span class="line">    SynchronizedList(List&lt;E&gt; list) &#123;</span><br><span class="line">        <span class="keyword">super</span>(list);</span><br><span class="line">        <span class="keyword">this</span>.list = list;</span><br><span class="line">    &#125;</span><br><span class="line">    SynchronizedList(List&lt;E&gt; list, Object mutex) &#123;</span><br><span class="line">        <span class="keyword">super</span>(list, mutex);</span><br><span class="line">        <span class="keyword">this</span>.list = list;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> list.get(index);&#125;        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过源码分析得知，Collections.synchronizedList() 返回的是 <code>SynchronizedList</code> 或 <code>SynchronizedRandomAccessList（SynchronizedList 的子类）</code>，而 SynchronizedList 只是持有原来的 List 对象，并实现了 List 接口的方法，然后在方法内部通过一个 <code>mutex</code> 对象锁的代码块保证线程安全。</p>
+<p>另外，从上面的代码还可以看出，SynchronizedList 的同步，使用的是synchronized 代码块对 mutex 对象加锁，这个 mutex 对象还能够通过构造函数传进来，也就是说我们可以指定锁定的对象。而 Vector 则使用了synchronized 方法，同步方法的作用范围是整个方法，所以没办法对同步进行细粒度的控制。而且同步方法加锁的是 this 对象，没办法控制锁定的对象。这也是 vector 和 SynchronizedList 的一个区别。</p>
+<h2 id="3-CopyOnWriteArrayList"><a href="#3-CopyOnWriteArrayList" class="headerlink" title="3. CopyOnWriteArrayList"></a>3. CopyOnWriteArrayList</h2><p>它是 ArrayList 的线程安全的变体，其中所有写操作（add，set等）都通过对底层数组进行全新复制来实现，允许存储 null 元素。</p>
+<p>顾名思义，Copy-On-Write 就是 CopyOnWriteArrayList 的实现机制。即当对象进行写操作时，使用了Lock锁做同步处理，内部拷贝了原数组，并在新数组上进行添加操作，最后将新数组替换掉旧数组；若进行的读操作，则直接返回结果，操作过程中不需要进行同步。</p>
+<p>这种实现方式的核心思想是减少锁竞争，从而提高在高并发时的读取性能，但是它却在一定程度上牺牲了写的性能。</p>
+<p>看上去这样做的成本就很高，但是在遍历操作的场景远远超过写操作（add，set 等）的情况下，它可能是最好的方案，并且在无法或不想同步遍历而又需要防止并发线程之间的干扰时很有用。</p>
+<p>那么它是如何做到避免并发线程之间遍历时的干扰呢？</p>
+<p>CopyOnWriteArrayList 的迭代器方法在创建迭代器时会创建一个当前数组状态的『快照』。这个数组在迭代器的生命周期内永不更改，因此不可能发生干扰，并且保证迭代器不会引发 ConcurrentModificationException。从迭代器被创建的那一刻起，该迭代器将不会因外界对列表的添加，删除或更改而改变。同时也不支持对迭代器本身进行元素更改操作（删除，设置和添加），这些方法都会抛出 UnsupportedOperationException。</p>
+<p>内存一致性影响：与其他并发集合一样，能够保证在时间上先在一个线程中向 CopyOnWriteArrayList 中的写入操作，先行发生于后续在另一个线程中对 CopyOnWriteArrayList 的读取或删除操作。</p>
+<p>要弄明白这一点，就要先了解 <a href="https://codexiaomai.github.io/posts/2a3a86ee.html">Java 的内存模型</a>，然后就可以根据源码证明上面这句话。</p>
+<p>CopyOnWriteArrayList 的写入与读取源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> <span class="keyword">volatile</span> Object[] array;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> Object[] getArray() &#123;</span><br><span class="line">    <span class="keyword">return</span> array;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ReentrantLock lock = <span class="keyword">this</span>.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> get(getArray(), index);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">remove</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ReentrantLock lock = <span class="keyword">this</span>.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        ...</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过阅读源码，可以发现无论是写操作，还量读操作或者是删除操作，都要先调用 getArray() 方法，而 getArray() 返回的就是 array 成员变量。但这个变量因为被 valatile 修饰，而 valatile 有一个特性就是：对一个 volatile 变量的写操作先行发生于后面对这个变量的读操作，这里的『后面』是指时间上的先后顺序（这就是8条先行发生原则里的 volatile 变量规则）。所以在多线程并发执行时，虚拟机会遵循这个先行发生原则，保证写操作先执行。</p>
+<h3 id="CopyOnWrite-VS-Vector"><a href="#CopyOnWrite-VS-Vector" class="headerlink" title="CopyOnWrite VS Vector"></a>CopyOnWrite VS Vector</h3><p>在 get() 操作上，Vector 使用了同步关键字，所有的 get() 操作都必须先取得对象锁才能进行。在高并发的情况下，大量的锁竞争会拖累系统性能。反观CopyOnWriteArrayList 的get() 实现，并没有任何的锁操作。</p>
+<p>在 add() 操作上，CopyOnWriteArrayList 的写操作性能不如 Vector，原因也在于Copy-On-Write，写入时不止加锁，还使用了Arrays.copyOf()进行了数组复制，性能开销较大，遇到大对象也会导致内存占用较大。</p>
+<p>在读多写少的高并发环境中，使用 CopyOnWriteArrayList 可以提高系统的性能，但是，在写多读少的场合，CopyOnWriteArrayList 的性能可能不如 Vector。</p>
 
     </div>
 
@@ -407,13 +392,17 @@
           
         
         <div class="post-tags">
-            <a href="/tags/字符编码/" rel="tag"># 字符编码</a>
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/集合/" rel="tag"># 集合</a>
+          
+            <a href="/tags/多线程/" rel="tag"># 多线程</a>
           
         </div>
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
-              <a href="/posts/1d56b016.html" rel="next" title="EnvironmentSwitcher">
-                <i class="fa fa-chevron-left"></i> EnvironmentSwitcher
+              <a href="/posts/2a3a86ee.html" rel="next" title="Java内存模型">
+                <i class="fa fa-chevron-left"></i> Java内存模型
               </a>
             
           </div>
@@ -421,10 +410,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-              <a href="/posts/61f01eb0.html" rel="prev" title="个人博客进化史">
-                个人博客进化史 <i class="fa fa-chevron-right"></i>
-              </a>
-            
           </div>
         </div>
     </footer>
@@ -603,7 +588,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ASCII-编码的诞生"><span class="nav-number">1.</span> <span class="nav-text">ASCII 编码的诞生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八仙过海，各显神通"><span class="nav-number">2.</span> <span class="nav-text">八仙过海，各显神通</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unicode-为统一而生"><span class="nav-number">3.</span> <span class="nav-text">Unicode 为统一而生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UTF-8-来优化-Unicode"><span class="nav-number">4.</span> <span class="nav-text">UTF-8 来优化 Unicode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">6.</span> <span class="nav-text">参考文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开源工具推广"><span class="nav-number">7.</span> <span class="nav-text">开源工具推广</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-使用-Collections-synchronizedList-List-list"><span class="nav-number">1.</span> <span class="nav-text">1. 使用 Collections.synchronizedList(List list)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Vector"><span class="nav-number">2.</span> <span class="nav-text">2. Vector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CopyOnWriteArrayList"><span class="nav-number">3.</span> <span class="nav-text">3. CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWrite-VS-Vector"><span class="nav-number">3.1.</span> <span class="nav-text">CopyOnWrite VS Vector</span></a></li></ol></li></ol></div>
             
 
           </div>
