@@ -56,18 +56,20 @@
   };
 </script>
 
-  <meta name="description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。">
-<meta name="keywords" content="Java,集合,多线程">
+  <meta name="description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。">
+<meta name="keywords" content="集合,Java,多线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java 线程安全的集合——List">
+<meta property="og:title" content="Java 线程安全的集合">
 <meta property="og:url" content="https://codexiaomai.github.io/posts/89530ef9.html">
 <meta property="og:site_name" content="CodeXiaoMai">
-<meta property="og:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。">
+<meta property="og:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-10T08:21:32.000Z">
+<meta property="og:image" content="https://codexiaomai.github.io/images/15732868147426/ConcurrentHashMap.png">
+<meta property="og:updated_time" content="2019-11-10T13:24:02.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java 线程安全的集合——List">
-<meta name="twitter:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。">
+<meta name="twitter:title" content="Java 线程安全的集合">
+<meta name="twitter:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。">
+<meta name="twitter:image" content="https://codexiaomai.github.io/images/15732868147426/ConcurrentHashMap.png">
   <link rel="canonical" href="https://codexiaomai.github.io/posts/89530ef9">
 
 
@@ -82,7 +84,7 @@
   };
 </script>
 
-  <title>Java 线程安全的集合——List | CodeXiaoMai</title>
+  <title>Java 线程安全的集合 | CodeXiaoMai</title>
   
 
 
@@ -272,7 +274,7 @@
       <header class="post-header">
 
         
-          <h2 class="post-title" itemprop="name headline">Java 线程安全的集合——List
+          <h2 class="post-title" itemprop="name headline">Java 线程安全的集合
 
               
             
@@ -293,7 +295,7 @@
                 
               
 
-              <time title="创建时间：2019-11-10 16:19:40 / 修改时间：16:21:32" itemprop="dateCreated datePublished" datetime="2019-11-10T16:19:40+08:00">2019-11-10</time>
+              <time title="创建时间：2019-11-10 16:19:40 / 修改时间：21:24:02" itemprop="dateCreated datePublished" datetime="2019-11-10T16:19:40+08:00">2019-11-10</time>
             </span>
           
             
@@ -317,7 +319,7 @@
           
 
           
-            <span id="/posts/89530ef9.html" class="post-meta-item leancloud_visitors" data-flag-title="Java 线程安全的集合——List">
+            <span id="/posts/89530ef9.html" class="post-meta-item leancloud_visitors" data-flag-title="Java 线程安全的集合">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -334,7 +336,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span title="本文字数">4.6k</span>
+              <span title="本文字数">7.1k</span>
             </span>
           
 
@@ -347,7 +349,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List。</p>
+        <p>在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。</p>
 <a id="more"></a>
 
 <h2 id="1-使用-Collections-synchronizedList-List-list"><a href="#1-使用-Collections-synchronizedList-List-list" class="headerlink" title="1. 使用 Collections.synchronizedList(List list)"></a>1. 使用 Collections.synchronizedList(List list)</h2><p>因为 ArrayList 本身不是线程安全的，通过 <code>Collections.synchronizedList(List&lt;T&gt; list)</code> 可以将其包装成一个线程安全的 List。</p>
@@ -381,6 +383,34 @@
 <h3 id="CopyOnWrite-VS-Vector"><a href="#CopyOnWrite-VS-Vector" class="headerlink" title="CopyOnWrite VS Vector"></a>CopyOnWrite VS Vector</h3><p>在 get() 操作上，Vector 使用了同步关键字，所有的 get() 操作都必须先取得对象锁才能进行。在高并发的情况下，大量的锁竞争会拖累系统性能。反观CopyOnWriteArrayList 的get() 实现，并没有任何的锁操作。</p>
 <p>在 add() 操作上，CopyOnWriteArrayList 的写操作性能不如 Vector，原因也在于Copy-On-Write，写入时不止加锁，还使用了Arrays.copyOf()进行了数组复制，性能开销较大，遇到大对象也会导致内存占用较大。</p>
 <p>在读多写少的高并发环境中，使用 CopyOnWriteArrayList 可以提高系统的性能，但是，在写多读少的场合，CopyOnWriteArrayList 的性能可能不如 Vector。</p>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>其实只要明白了线程安全的 List 的实现机制后，Set 和 Map 也就很容易明白了，它们的机制是相似的。</p>
+<ul>
+<li><p>Collections 也提供了 synchronizedSet 和 synchronizedMap 方法，它们的原理也和 synchronizedList 一样。</p>
+</li>
+<li><p>java.util 包下也提供了线程安全的 Map —— HashTable。HashTable 与 HashMap 的关系同 Vector 与 ArrayList 的关系一样，都是对读写方法加锁。但是 HashTable 的 Key 和 Value 都不允许为 null。</p>
+</li>
+<li><p>java.util.concurrent 包下也提供了像 CopyOnWriteArrayList 类似的 CopyOnWriteSet。而且实际上 CopyOnWriteSet 内部就是通过 CopyOnWriteArrayList 实现的，它的 add 方法内部调用了 CopyOnWriteArrayList 的 addIfAbsent() 方法，这个方法的作用是如果要添加的元素在集合中不存在才会加入集合中，否则集合不会发生改变，并返回 false。</p>
+<blockquote>
+<p>支持线程安全的 Set 还有 ConcurrentSkipListSet。</p>
+</blockquote>
+</li>
+<li><p>java.util.concurrent 包下还提供了线程安全的 Map ——  ConcurrentHashMap。它与 HashTable 的主要区别三者加锁粒度的不同，HashTable 的加锁方法是给每个方法加上 synchronized 关键字，这样锁住的是整个 Table 对象。而 ConcurrentHashMap 是更细粒度的加锁，在JDK1.8之前，ConcurrentHashMap加的是分段锁，也就是Segment锁，每个Segment 含有整个 table 的一部分，这样不同分段之间的并发操作就互不影响。</p>
+<p>  分段锁的原理如下：</p>
+<p>  <img src="/images/15732868147426/ConcurrentHashMap.png" alt></p>
+<p>  Segment 的结构与 HashMap 类似，每个片段对应一个table数组和链表结构！一个Segment里面包含一个HashEntry数组，每个HashEntry是一个链表结构，当对HashEntry数组的数据进行修改时，必须首先获得与它对应的Segment锁！</p>
+<p>  虽然分段锁可以提高并发性，但理论上最大并发度与Segment个数相等。JDK1.8对此做了进一步的改进，它取消了Segment字段，直接在table元素上加锁，实现对每一行进行加锁，进一步减小了并发冲突的概率。对于put操作，如果Key对应的数组元素为null，则通过CAS操作（Compare and Swap）将其设置为当前值。如果Key对应的数组元素（也即链表表头或者树的根元素）不为null，则对该元素使用 synchronized 关键字申请锁，然后进行操作。如果该 put 操作使得当前链表长度超过一定阈值，则将该链表转换为红黑树，从而提高寻址效率。</p>
+<p>  对于读操作，由于数组被 volatile 关键字修饰，因此不用担心数组的可见性问题。同时每个元素是一个 Node 实例（Java 7中每个元素是一个HashEntry），它的Key值和hash值都由final修饰，不可变更，无须关心它们被修改后的可见性问题。而其Value及对下一个元素的引用由volatile修饰，可见性也有保障。</p>
+<blockquote>
+<p>支持线程安全的 Map 还有 ConcurrentSkipListMap。</p>
+</blockquote>
+</li>
+<li><p>并发 Queue。在并发队列上，JDK提供了两套实现，一个是以 ConcurrentLinkedQueue 为代表的高性能队列，一个是以 BlockingQueue 接口为代表的阻塞队列。ConcurrentLinkedQueue 是一个适用于高并发场景下的队列。它通过无锁的方式，实现了高并发状态下的高性能。通常，ConcurrentLinkedQueue 的性能要好于 BlockingQueue 。</p>
+<p>  与 ConcurrentLinkedQueue 的使用场景不同，BlockingQueue 的主要功能并不是在于提升高并发时的队列性能，而在于简化多线程间的数据共享。<br>  BlockingQueue 提供一种读写阻塞等待的机制，即如果消费者速度较快，则 BlockingQueue 则可能被清空，此时消费线程再试图从 BlockingQueue 读取数据时就会被阻塞。反之，如果生产线程较快，则 BlockingQueue 可能会被装满，此时，生产线程再试图向 BlockingQueue 队列装入数据时，便会被阻塞等待，其工作模式如图所示。</p>
+</li>
+<li><p>并发 Deque（Double-Ended Queue，双端队列）。Deque 允许在队列的头部或尾部进行出队和入队操作。LinkedList、ArrayDeque、LinkedBlocingDeque 都实现了双端队列Deque接口。其中LinkedList使用链表实现了双端队列，ArrayDeque使用数组实现双端队列。通常情况下，由于ArrayDeque基于数组实现，拥有高效的随机访问性能，因此ArrayDeque具有更好的遍历性能。但是当队列的大小发生变化较大时，ArrayDeque需要重新分配内存，并进行数组复制，在这种环境下，基于链表的 LinkedList 没有内存调整和数组复制的负担，性能表现会比较好。但无论是LinkedList或是ArrayDeque，它们都不是线程安全的。</p>
+<p>  LinkedBlockingDeque 是一个线程安全的双端队列实现。它的内部使用链表结构，每一个节点都维护了一个前驱节点和一个后驱节点。LinkedBlockingDeque 没有进行读写锁的分离，因此同一时间只能有一个线程对其进行操作。Java 还提供了一个 ConcurrentLinkedDeque，可在多线程并发时进行读写操作。</p>
+</li>
+</ul>
 
     </div>
 
@@ -392,9 +422,9 @@
           
         
         <div class="post-tags">
-            <a href="/tags/Java/" rel="tag"># Java</a>
-          
             <a href="/tags/集合/" rel="tag"># 集合</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
           
             <a href="/tags/多线程/" rel="tag"># 多线程</a>
           
@@ -588,7 +618,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-使用-Collections-synchronizedList-List-list"><span class="nav-number">1.</span> <span class="nav-text">1. 使用 Collections.synchronizedList(List list)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Vector"><span class="nav-number">2.</span> <span class="nav-text">2. Vector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CopyOnWriteArrayList"><span class="nav-number">3.</span> <span class="nav-text">3. CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWrite-VS-Vector"><span class="nav-number">3.1.</span> <span class="nav-text">CopyOnWrite VS Vector</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-使用-Collections-synchronizedList-List-list"><span class="nav-number">1.</span> <span class="nav-text">1. 使用 Collections.synchronizedList(List list)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Vector"><span class="nav-number">2.</span> <span class="nav-text">2. Vector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CopyOnWriteArrayList"><span class="nav-number">3.</span> <span class="nav-text">3. CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWrite-VS-Vector"><span class="nav-number">3.1.</span> <span class="nav-text">CopyOnWrite VS Vector</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展"><span class="nav-number">4.</span> <span class="nav-text">扩展</span></a></li></ol></div>
             
 
           </div>
