@@ -65,7 +65,7 @@
 <meta property="og:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://codexiaomai.github.io/images/15732868147426/ConcurrentHashMap.png">
-<meta property="og:updated_time" content="2019-11-10T13:24:02.000Z">
+<meta property="og:updated_time" content="2019-11-16T01:39:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 线程安全的集合">
 <meta name="twitter:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。">
@@ -295,11 +295,21 @@
                 
               
 
-              <time title="创建时间：2019-11-10 16:19:40 / 修改时间：21:24:02" itemprop="dateCreated datePublished" datetime="2019-11-10T16:19:40+08:00">2019-11-10</time>
+              <time title="创建时间：2019-11-10 16:19:40" itemprop="dateCreated datePublished" datetime="2019-11-10T16:19:40+08:00">2019-11-10</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-16 09:39:54" itemprop="dateModified" datetime="2019-11-16T09:39:54+08:00">2019-11-16</time>
+              </span>
             
           
             <span class="post-meta-item">
@@ -405,7 +415,8 @@
 </blockquote>
 </li>
 <li><p>并发 Queue。在并发队列上，JDK提供了两套实现，一个是以 ConcurrentLinkedQueue 为代表的高性能队列，一个是以 BlockingQueue 接口为代表的阻塞队列。ConcurrentLinkedQueue 是一个适用于高并发场景下的队列。它通过无锁的方式，实现了高并发状态下的高性能。通常，ConcurrentLinkedQueue 的性能要好于 BlockingQueue 。</p>
-<p>  与 ConcurrentLinkedQueue 的使用场景不同，BlockingQueue 的主要功能并不是在于提升高并发时的队列性能，而在于简化多线程间的数据共享。<br>  BlockingQueue 提供一种读写阻塞等待的机制，即如果消费者速度较快，则 BlockingQueue 则可能被清空，此时消费线程再试图从 BlockingQueue 读取数据时就会被阻塞。反之，如果生产线程较快，则 BlockingQueue 可能会被装满，此时，生产线程再试图向 BlockingQueue 队列装入数据时，便会被阻塞等待，其工作模式如图所示。</p>
+<p>  与 ConcurrentLinkedQueue 的使用场景不同，BlockingQueue 的主要功能并不是在于提升高并发时的队列性能，而在于简化多线程间的数据共享。</p>
+<p>  BlockingQueue 提供一种读写阻塞等待的机制，即如果消费者速度较快，则 BlockingQueue 则可能被清空，此时消费线程再试图从 BlockingQueue 读取数据时就会被阻塞。反之，如果生产线程较快，则 BlockingQueue 可能会被装满，此时，生产线程再试图向 BlockingQueue 队列装入数据时，便会被阻塞等待。</p>
 </li>
 <li><p>并发 Deque（Double-Ended Queue，双端队列）。Deque 允许在队列的头部或尾部进行出队和入队操作。LinkedList、ArrayDeque、LinkedBlocingDeque 都实现了双端队列Deque接口。其中LinkedList使用链表实现了双端队列，ArrayDeque使用数组实现双端队列。通常情况下，由于ArrayDeque基于数组实现，拥有高效的随机访问性能，因此ArrayDeque具有更好的遍历性能。但是当队列的大小发生变化较大时，ArrayDeque需要重新分配内存，并进行数组复制，在这种环境下，基于链表的 LinkedList 没有内存调整和数组复制的负担，性能表现会比较好。但无论是LinkedList或是ArrayDeque，它们都不是线程安全的。</p>
 <p>  LinkedBlockingDeque 是一个线程安全的双端队列实现。它的内部使用链表结构，每一个节点都维护了一个前驱节点和一个后驱节点。LinkedBlockingDeque 没有进行读写锁的分离，因此同一时间只能有一个线程对其进行操作。Java 还提供了一个 ConcurrentLinkedDeque，可在多线程并发时进行读写操作。</p>
@@ -440,6 +451,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+              <a href="/posts/d6577968.html" rel="prev" title="Java 值传递">
+                Java 值传递 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
     </footer>
@@ -495,7 +510,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
