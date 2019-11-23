@@ -65,7 +65,7 @@
 <meta property="og:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://codexiaomai.github.io/images/15732868147426/ConcurrentHashMap.png">
-<meta property="og:updated_time" content="2019-11-16T01:39:54.000Z">
+<meta property="og:updated_time" content="2019-11-23T11:44:50.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 线程安全的集合">
 <meta name="twitter:description" content="在 Java 中我们使用最多的 List 就是 ArrayList 和 LinkedList，它们在单线程中可以说是”玩的不亦乐乎”，而在多线程并发操作时就不行了。Java 为我们提供了几种方式以适应多线程下的 List 操作场景。本文将介绍几个多线程中适用的 List，文章最后也会介绍线程安全的 Map、Set 以及 Queue 和 Deque 的几个实现类。">
@@ -308,7 +308,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-16 09:39:54" itemprop="dateModified" datetime="2019-11-16T09:39:54+08:00">2019-11-16</time>
+                <time title="修改时间：2019-11-23 19:44:50" itemprop="dateModified" datetime="2019-11-23T19:44:50+08:00">2019-11-23</time>
               </span>
             
           
@@ -404,7 +404,7 @@
 <p>支持线程安全的 Set 还有 ConcurrentSkipListSet。</p>
 </blockquote>
 </li>
-<li><p>java.util.concurrent 包下还提供了线程安全的 Map ——  ConcurrentHashMap。它与 HashTable 的主要区别三者加锁粒度的不同，HashTable 的加锁方法是给每个方法加上 synchronized 关键字，这样锁住的是整个 Table 对象。而 ConcurrentHashMap 是更细粒度的加锁，在JDK1.8之前，ConcurrentHashMap加的是分段锁，也就是Segment锁，每个Segment 含有整个 table 的一部分，这样不同分段之间的并发操作就互不影响。</p>
+<li><p>java.util.concurrent 包下还提供了线程安全的 Map ——  ConcurrentHashMap。它与 HashTable 的主要区别是二者加锁粒度的不同，HashTable 的加锁方法是给每个方法加上 synchronized 关键字，这样锁住的是整个 Table 对象。而 ConcurrentHashMap 是更细粒度的加锁，在JDK1.8之前，ConcurrentHashMap加的是分段锁，也就是Segment锁，每个Segment 含有整个 table 的一部分，这样不同分段之间的并发操作就互不影响。</p>
 <p>  分段锁的原理如下：</p>
 <p>  <img src="/images/15732868147426/ConcurrentHashMap.png" alt></p>
 <p>  Segment 的结构与 HashMap 类似，每个片段对应一个table数组和链表结构！一个Segment里面包含一个HashEntry数组，每个HashEntry是一个链表结构，当对HashEntry数组的数据进行修改时，必须首先获得与它对应的Segment锁！</p>
@@ -414,7 +414,7 @@
 <p>支持线程安全的 Map 还有 ConcurrentSkipListMap。</p>
 </blockquote>
 </li>
-<li><p>并发 Queue。在并发队列上，JDK提供了两套实现，一个是以 ConcurrentLinkedQueue 为代表的高性能队列，一个是以 BlockingQueue 接口为代表的阻塞队列。ConcurrentLinkedQueue 是一个适用于高并发场景下的队列。它通过无锁的方式，实现了高并发状态下的高性能。通常，ConcurrentLinkedQueue 的性能要好于 BlockingQueue 。</p>
+<li><p>并发 Queue。在并发队列上，JDK提供了两套实现，一个是以 ConcurrentLinkedQueue 为代表的高性能队列，一个是以 BlockingQueue 接口为代表的阻塞队列。ConcurrentLinkedQueue 是一个适用于高并发场景下的队列。它通过无锁的方式(CAS)，实现了高并发状态下的高性能。通常，ConcurrentLinkedQueue 的性能要好于 BlockingQueue 。</p>
 <p>  与 ConcurrentLinkedQueue 的使用场景不同，BlockingQueue 的主要功能并不是在于提升高并发时的队列性能，而在于简化多线程间的数据共享。</p>
 <p>  BlockingQueue 提供一种读写阻塞等待的机制，即如果消费者速度较快，则 BlockingQueue 则可能被清空，此时消费线程再试图从 BlockingQueue 读取数据时就会被阻塞。反之，如果生产线程较快，则 BlockingQueue 可能会被装满，此时，生产线程再试图向 BlockingQueue 队列装入数据时，便会被阻塞等待。</p>
 </li>
