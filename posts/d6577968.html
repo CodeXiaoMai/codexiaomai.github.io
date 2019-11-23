@@ -70,7 +70,7 @@
 <meta property="og:image" content="https://codexiaomai.github.io/images/15732868147436/5275145-bf015a6620fe2aaa.png">
 <meta property="og:image" content="https://codexiaomai.github.io/images/15732868147436/5275145-cb25cd0e5b8b6293.png">
 <meta property="og:image" content="https://codexiaomai.github.io/images/15732868147436/5275145-677b4afe0cabbf1f.png">
-<meta property="og:updated_time" content="2019-11-16T02:14:13.000Z">
+<meta property="og:updated_time" content="2019-11-23T10:59:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 值传递">
 <meta name="twitter:description" content="其实 Java 中是只存在值传递的，不存在引用传递。因为我们大多数人是从 C 语言入门，而 C 语言中是存在引用传递的，所以很容易在 Java 中混淆。">
@@ -300,11 +300,21 @@
                 
               
 
-              <time title="创建时间：2019-11-16 09:31:08 / 修改时间：10:14:13" itemprop="dateCreated datePublished" datetime="2019-11-16T09:31:08+08:00">2019-11-16</time>
+              <time title="创建时间：2019-11-16 09:31:08" itemprop="dateCreated datePublished" datetime="2019-11-16T09:31:08+08:00">2019-11-16</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-23 18:59:43" itemprop="dateModified" datetime="2019-11-23T18:59:43+08:00">2019-11-23</time>
+              </span>
             
           
             <span class="post-meta-item">
@@ -377,7 +387,7 @@
 <p>输出结果：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">99</span><br></pre></td></tr></table></figure>
 
-<p>这个很好理解，其实通过编译器也可以发现，foo() 方法中的 num 颜色为灰色并且带有波浪线，把鼠标放到变量上还会看到提示：“Parameter can be converted to a local variable”。意思就是这个变量可以转化为一个本地变量，也就是在方法内部声明。根据“参数传递就是赋值操作”，来梳理一下整个过程。当调用 foo() 方法时，将实参（ num） 的值赋值给了形参（num1 ），这时内存中存在两个变量 num（实参）、num1（形参），因为基本类型的变量赋值是直接覆盖操作，所以我们对形参（num1）的操作只是改不了形参的值，而不会影响实参（num） 。</p>
+<p>这个很好理解，其实通过编译器也可以发现，foo() 方法中的 num 颜色为灰色并且带有波浪线，把鼠标放到变量上还会看到提示：“Parameter can be converted to a local variable”。意思就是这个变量可以转化为一个本地变量，也就是在方法内部声明。根据“参数传递就是赋值操作”，来梳理一下整个过程。当调用 foo() 方法时，将实参（ num） 的值赋值给了形参（num1 ），这时内存中存在两个变量 num（实参）、num1（形参），因为基本类型的变量赋值是直接覆盖操作，所以我们对形参（num1）的操作只是改变了形参的值，而不会影响实参（num） 。</p>
 <h3 id="例2-普通引用类型的变量传参"><a href="#例2-普通引用类型的变量传参" class="headerlink" title="例2.普通引用类型的变量传参"></a>例2.普通引用类型的变量传参</h3><p>说是普通引用类型，是指类内部提供了改变自身的方法。</p>
 <p><img src="/images/15732868147436/5275145-bf015a6620fe2aaa.png" alt="普通引用类型的变量传参"></p>
 <p>这次可以发现编译器没有提示异常信息，这至少可以证明，在 foo() 方法中对形参 myObject1 进行操作之后，形参 myObject1 仍然被引用，那是不是可以证明形参 myObject1 和实参 myObject 是同一个对象呢？我们先看看结果：</p>
@@ -403,7 +413,7 @@
 </li>
 <li><p>对于引用类型变量，是把实参引用的对象的内存地址复制给形参，所以实参和形参指向同一个对象。</p>
 </li>
-<li><p>特殊引用类型变量，因为自身不可变的特点，当再次对形参进行赋值操作后，形参指向一个新的对象，而实参扔指向原来的对象。特殊引用类型变量包括 String 和一些基本类型的包装类（Integer、Double、Boolean等）。</p>
+<li><p>特殊引用类型变量，因为自身不可变的特点，当再次对形参进行赋值操作后，形参指向一个新的对象，而实参仍然指向原来的对象。特殊引用类型变量包括 String 和一些基本类型的包装类（Integer、Double、Boolean等）。</p>
 </li>
 </ul>
 
