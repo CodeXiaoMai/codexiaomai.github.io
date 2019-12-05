@@ -64,7 +64,7 @@
 <meta property="og:site_name" content="CodeXiaoMai">
 <meta property="og:description" content="今天是 2019年09月13日，农历八月十五。没错今天是中秋节，而且对我来说，今年的中秋不一样🖕。 故事是这样的 —— 中秋前一天的晚上线上发现了问题，在家改bug到后半夜。中秋当天上午早上又接到线上的问题反馈，于是在家与其他几个小伙伴一起连线排查解决。经过一上午的努力，修改了几个问题，但是有两个问题没有查到原因和解决办法，于是决定下午去公司解决，还好下午狠顺利的将问题复现了，并找到了原因和解决">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-15T08:30:30.000Z">
+<meta property="og:updated_time" content="2019-12-04T13:30:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FragmentManager is already executing transactions 异常分析">
 <meta name="twitter:description" content="今天是 2019年09月13日，农历八月十五。没错今天是中秋节，而且对我来说，今年的中秋不一样🖕。 故事是这样的 —— 中秋前一天的晚上线上发现了问题，在家改bug到后半夜。中秋当天上午早上又接到线上的问题反馈，于是在家与其他几个小伙伴一起连线排查解决。经过一上午的努力，修改了几个问题，但是有两个问题没有查到原因和解决办法，于是决定下午去公司解决，还好下午狠顺利的将问题复现了，并找到了原因和解决">
@@ -306,7 +306,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-15 16:30:30" itemprop="dateModified" datetime="2019-09-15T16:30:30+08:00">2019-09-15</time>
+                <time title="修改时间：2019-12-04 21:30:45" itemprop="dateModified" datetime="2019-12-04T21:30:45+08:00">2019-12-04</time>
               </span>
             
           
@@ -407,7 +407,7 @@
 <p>代码分析六（此时进入 Fragment）：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Fragment</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">performStart</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mChildFragmentManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">            mChildFragmentManager.noteStateNotSaved();</span><br><span class="line">            <span class="comment">// 再次回到代码分析一</span></span><br><span class="line">            mChildFragmentManager.execPendingActions();</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><font color="red">虽然这里再次进入代码分析一，但这时的 FragmentManager 与前面的 FragmentManager 已经不是同一个了，之前是 Activity 中的而现在是 ReportFragment 中的 childFragmentManager，并且 Activity 的栈帧仍然处在代码分析三的 mo veToState() 方法中，mExecutingActions 仍然为 true。</font></p>
+<p><font color="red">虽然这里再次进入代码分析一，但这时的 FragmentManager 与前面的 FragmentManager 已经不是同一个了，之前是 Activity 中的而现在是 ReportFragment 中的 childFragmentManager，并且 Activity 的栈帧仍然处在代码分析三的 moveToState() 方法中，mExecutingActions 仍然为 true。</font></p>
 <p>代码分析一（此时的 FragmentManager 为 ReportFragment 中的 childFragmentManager）：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">execPendingActions</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ensureExecReady(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> didSomething = <span class="keyword">false</span>;</span><br><span class="line">    ...省略部分代码</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> didSomething;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
