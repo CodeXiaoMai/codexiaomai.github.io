@@ -6,13 +6,13 @@ const ap = new APlayer({
       {
         name: '爱要怎么说出口',
         artist: 'JJ Lin',
-        url: 'https://xiaomai.ga/music/爱要怎么说出口.mp3',
+        url: 'https://xiaomaimai.tk/music/爱要怎么说出口.mp3',
         cover: '/images/ljj.jpg',
       },
       {
         name: '我们的爱',
         artist: 'JJ Lin',
-        url: 'https://xiaomai.ga/music/我们的爱.mp3',
+        url: 'https://xiaomaimai.tk/music/我们的爱.mp3',
         cover: '/images/ljj.jpg',
       }
     ]
